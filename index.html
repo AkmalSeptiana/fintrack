@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FinTrack - Kelola Keuangan Pribadi dengan Cerdas & Rapi</title>
   
+  <!-- PWA & Mobile Native Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#059669">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FinTrack">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
@@ -399,6 +409,22 @@
             <div id="categoryChipsList" class="flex flex-wrap gap-2 pt-2">
               <!-- Dynamic JS chips -->
             </div>
+          </div>
+
+          <!-- PWA Install App Card -->
+          <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-5 shadow-lg text-white border border-slate-700">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/30">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-white">Install FinTrack ke HP</h3>
+                <p class="text-[11px] text-slate-300">Gunakan layaknya aplikasi native Android / iOS</p>
+              </div>
+            </div>
+            <button id="pwaInstallBtn" onclick="installPWAApp()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
+              <i class="fa-solid fa-download"></i> Install Aplikasi Sekarang
+            </button>
           </div>
 
           <!-- Auth & Password Settings Card -->

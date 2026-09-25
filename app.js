@@ -1001,3 +1001,57 @@ function showToast(message, type = 'info') {
     toast.classList.add('opacity-0', 'pointer-events-none');
   }, 3000);
 }
+
+// ==========================================
+// 9. PROGRESSIVE WEB APP (PWA) LOGIC
+// ==========================================
+
+let deferredPWAInstallPrompt = null;
+
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then((reg) => console.log('[PWA] ServiceWorker registered:', reg.scope))
+      .catch((err) => console.log('[PWA] ServiceWorker registration failed:', err));
+  });
+}
+
+// Listen for PWA Install Prompt Event
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPWAInstallPrompt = e;
+  
+  const pwaBtn = document.getElementById('pwaInstallBtn');
+  if (pwaBtn) {
+    pwaBtn.classList.remove('opacity-50');
+    pwaBtn.innerHTML = `<i class="fa-solid fa-download"></i> Install Aplikasi Sekarang`;
+  }
+});
+
+// Install App Button Trigger
+async function installPWAApp() {
+  if (deferredPWAInstallPrompt) {
+    deferredPWAInstallPrompt.prompt();
+    const { outcome } = await deferredPWAInstallPrompt.userChoice;
+    if (outcome === 'accepted') {
+      showToast('FinTrack berhasil dipasang di perangkat Anda!', 'success');
+    }
+    deferredPWAInstallPrompt = null;
+  } else {
+    // Instructions for Android / iOS manual installation
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (isIOS) {
+      alert('Untuk menginstall FinTrack di iPhone/iPad:\n1. Ketuk tombol Share (Bagikan) di Safari.\n2. Pilih "Add to Home Screen" (Tambah ke Utama).');
+    } else {
+      alert('Untuk menginstall FinTrack di Android/Desktop:\n1. Buka menu browser (titik 3 di kanan atas).\n2. Pilih "Install app" atau "Add to Home screen" (Tambahkan ke Layar Utama).');
+    }
+  }
+}
+
+// Detect when installed
+window.addEventListener('appinstalled', () => {
+  deferredPWAInstallPrompt = null;
+  showToast('FinTrack telah terpasang!', 'success');
+});
+

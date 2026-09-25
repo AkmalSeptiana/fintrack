@@ -12,6 +12,7 @@ Aplikasi Web **Single Page Application (SPA)** berbasis *Mobile-First Container 
 
 ## 🌟 Fitur Utama
 
+- 📲 **Progressive Web App (PWA)**: Berjalan layaknya aplikasi bawaan (native app) di HP Android & iOS! Bisa di-install langsung ke Layar Utama (*Home Screen*) tanpa melalui Play Store / App Store.
 - 📱 **Mobile-First Container Design**: Tampilan antarmuka *responsive* dengan gaya modern (*Glassmorphism*, gradien Emerald, dan animasi halus).
 - 📊 **Visual Breakdown Chart**: Diagram Donut interaktif (*Chart.js*) untuk melihat distribusi pengeluaran per kategori.
 - 🏆 **Ranking Pengeluaran Interaktif**: Baris progresif kategori pengeluaran terbanyak beserta opsi penyortiran (*Tertinggi/Terendah*).
@@ -19,7 +20,7 @@ Aplikasi Web **Single Page Application (SPA)** berbasis *Mobile-First Container 
 - 🗓️ **Filter Pemilih Bulan**: Tinjau histori & analisis ringkasan keuangan berdasarkan bulan & tahun.
 - ⚡ **Hybrid Mode (Cloud Sync & Offline Support)**:
   - **Cloud Mode**: Tersinkronisasi otomatis dengan **Google Spreadsheet** via Google Apps Script (GAS).
-  - **Local Mode**: Berjalan 100% offline menggunakan *LocalStorage* browser jika tanpa API.
+  - **Local Mode**: Berjalan 100% offline menggunakan *Service Worker* & *LocalStorage* browser jika tanpa API.
 - ⚙️ **Kelola Master Kategori**: Tambah & hapus kategori kustom sesuai kebutuhan Anda.
 
 ---
@@ -30,7 +31,10 @@ Aplikasi Web **Single Page Application (SPA)** berbasis *Mobile-First Container 
 .
 ├── index.html            # Struktur HTML5 utama SPA
 ├── style.css             # Custom styling, animasi, & CSS tokens
-├── app.js                # Logika aplikasi frontend & handler API
+├── app.js                # Logika aplikasi frontend, PWA handler, & API
+├── manifest.json         # Konfigurasi PWA Web App Manifest
+├── sw.js                 # Service Worker PWA (Offline caching)
+├── icon.svg              # Ikon vektor aplikasi FinTrack
 ├── Code.gs               # Backend Script untuk Google Apps Script (GAS)
 ├── push-to-github.bat    # Skrip otomatis Git Push (Double-click di Windows)
 ├── .gitignore            # Berkas pengecualian Git
