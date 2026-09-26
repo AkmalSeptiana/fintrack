@@ -366,6 +366,27 @@
             </div>
           </div>
 
+          <!-- Siklus Gajian & Cut-off Periode Card -->
+          <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+            <h3 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days text-emerald-600"></i> Siklus Gajian & Cut-off Periode
+            </h3>
+            <p class="text-xs text-slate-500 mb-3">Tentukan tanggal mulai gajian Anda untuk memfilter anggaran bulanan (contoh: 26 Sep - 25 Okt).</p>
+            <div class="flex gap-2">
+              <select id="paydayCutoffSelect" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <option value="1">Tanggal 1 (Kalender Standar: 1 - 31)</option>
+                <option value="25">Tanggal 25 (Siklus Gajian 25 - 24)</option>
+                <option value="26">Tanggal 26 (Siklus Gajian 26 - 25)</option>
+                <option value="27">Tanggal 27 (Siklus Gajian 27 - 26)</option>
+                <option value="28">Tanggal 28 (Siklus Gajian 28 - 27)</option>
+              </select>
+              <button onclick="savePaydayCutoff()" class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl shadow hover:bg-emerald-700 transition">
+                Simpan
+              </button>
+            </div>
+          </div>
+
+
           <!-- API Backend Connection Config Card -->
           <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
             <div class="flex items-center justify-between mb-3">

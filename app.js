@@ -9,6 +9,7 @@
 const state = {
   currentUser: JSON.parse(localStorage.getItem('app_user')) || null,
   apiUrl: localStorage.getItem('app_api_url') || '',
+  paydayCutoff: parseInt(localStorage.getItem('app_payday_cutoff')) || 26, // Default 26 for payday cycle (26-25)
   selectedMonth: new Date(2026, 8, 1), // Default September 2026
   currentTab: 'home',
   inputType: 'pengeluaran',
@@ -60,6 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     state.data = mockInitialData;
   }
+
+  // Set payday cutoff select value
+  const paydayCutoffSelect = document.getElementById('paydayCutoffSelect');
+  if (paydayCutoffSelect) paydayCutoffSelect.value = state.paydayCutoff || 26;
 
   // Set today's date in input form default
   const today = new Date().toISOString().split('T')[0];
@@ -227,6 +232,9 @@ function updateUserHeader() {
   
   const budgetInput = document.getElementById('budgetInput');
   if (budgetInput) budgetInput.value = formatIDR(state.currentUser.monthlyBudget);
+
+  const paydayCutoffSelect = document.getElementById('paydayCutoffSelect');
+  if (paydayCutoffSelect) paydayCutoffSelect.value = state.paydayCutoff || 26;
 }
 
 async function fetchDataFromAPI() {
@@ -332,6 +340,43 @@ async function saveMonthlyBudget() {
   updateAllViews();
 }
 
+// Save Payday Cut-off Cycle Setting
+function savePaydayCutoff() {
+  const val = parseInt(document.getElementById('paydayCutoffSelect').value) || 1;
+  state.paydayCutoff = val;
+  localStorage.setItem('app_payday_cutoff', val.toString());
+
+  showToast(`Siklus gajian disimpan! (Cut-off Tanggal ${val})`, 'success');
+  updateAllViews();
+}
+
+// Get Date Range for Current Selected Month & Payday Cut-off
+function getSelectedPeriodRange() {
+  const year = state.selectedMonth.getFullYear();
+  const month = state.selectedMonth.getMonth(); // 0-indexed (0 = Jan, 8 = Sep, 9 = Oct)
+  const cutoff = state.paydayCutoff || 1;
+
+  if (cutoff === 1) {
+    const startDate = new Date(year, month, 1, 0, 0, 0);
+    const endDate = new Date(year, month + 1, 0, 23, 59, 59);
+    return { startDate, endDate, cutoff };
+  } else {
+    // Cut-off > 1 (e.g. 26: 26th of previous month to 25th of current selected month)
+    const startDate = new Date(year, month - 1, cutoff, 0, 0, 0);
+    const endDate = new Date(year, month, cutoff - 1, 23, 59, 59);
+    return { startDate, endDate, cutoff };
+  }
+}
+
+// Helper to check if item date string (YYYY-MM-DD) falls within date range
+function isDateInPeriodRange(dateStr, startDate, endDate) {
+  if (!dateStr) return false;
+  const parts = dateStr.split('-');
+  if (parts.length < 3) return false;
+  const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]), 12, 0, 0);
+  return d >= startDate && d <= endDate;
+}
+
 // ==========================================
 // 3. TAB NAVIGATION & MONTH FILTER
 // ==========================================
@@ -365,20 +410,33 @@ function changeMonth(delta) {
 function updateMonthDisplays() {
   const options = { month: 'long', year: 'numeric' };
   const strMonth = state.selectedMonth.toLocaleDateString('id-ID', options);
+  const cutoff = state.paydayCutoff || 1;
+  const { startDate, endDate } = getSelectedPeriodRange();
   
   const currentMonthDisplay = document.getElementById('currentMonthDisplay');
-  if (currentMonthDisplay) {
-    currentMonthDisplay.innerHTML = `<i class="fa-regular fa-calendar text-emerald-400"></i> ${strMonth}`;
-  }
-
-  const shortOptions = { month: 'short', year: 'numeric' };
-  const shortMonth = state.selectedMonth.toLocaleDateString('id-ID', shortOptions);
-  
   const homeBadge = document.getElementById('homeMonthBadge');
-  if (homeBadge) homeBadge.innerText = shortMonth;
-
   const aktivitasBadge = document.getElementById('aktivitasMonthBadge');
-  if (aktivitasBadge) aktivitasBadge.innerText = shortMonth;
+
+  if (cutoff > 1) {
+    const startStr = startDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    const endStr = endDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    
+    if (currentMonthDisplay) {
+      currentMonthDisplay.innerHTML = `<i class="fa-regular fa-calendar text-emerald-400"></i> ${strMonth} <span class="text-xs font-normal opacity-80">(${startStr} - ${endStr})</span>`;
+    }
+
+    const shortBadgeStr = `${state.selectedMonth.toLocaleDateString('id-ID', { month: 'short' })} (${startStr} - ${endStr})`;
+    if (homeBadge) homeBadge.innerText = shortBadgeStr;
+    if (aktivitasBadge) aktivitasBadge.innerText = shortBadgeStr;
+  } else {
+    if (currentMonthDisplay) {
+      currentMonthDisplay.innerHTML = `<i class="fa-regular fa-calendar text-emerald-400"></i> ${strMonth}`;
+    }
+
+    const shortMonth = state.selectedMonth.toLocaleDateString('id-ID', { month: 'short', year: 'numeric' });
+    if (homeBadge) homeBadge.innerText = shortMonth;
+    if (aktivitasBadge) aktivitasBadge.innerText = shortMonth;
+  }
 }
 
 // ==========================================
@@ -389,23 +447,19 @@ function updateAllViews() {
   updateMonthDisplays();
   updateUserHeader();
 
-  // Filter Data for Selected Month
-  const year = state.selectedMonth.getFullYear();
-  const month = state.selectedMonth.getMonth();
+  // Filter Data for Selected Period Range
+  const { startDate, endDate } = getSelectedPeriodRange();
 
   const filteredPemasukan = (state.data.pemasukan || []).filter(item => {
-    const d = new Date(item.tanggal);
-    return d.getFullYear() === year && d.getMonth() === month;
+    return isDateInPeriodRange(item.tanggal, startDate, endDate);
   });
 
   const filteredPengeluaran = (state.data.pengeluaran || []).filter(item => {
-    const d = new Date(item.tanggal);
-    return d.getFullYear() === year && d.getMonth() === month;
+    return isDateInPeriodRange(item.tanggal, startDate, endDate);
   });
 
   const filteredTabungan = (state.data.tabungan || []).filter(item => {
-    const d = new Date(item.tanggal);
-    return d.getFullYear() === year && d.getMonth() === month;
+    return isDateInPeriodRange(item.tanggal, startDate, endDate);
   });
 
   // Calculate Totals
