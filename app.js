@@ -336,6 +336,20 @@ function savePaydayCutoff() {
   state.paydayCutoff = val;
   localStorage.setItem('app_payday_cutoff', val.toString());
 
+  if (state.apiUrl && state.currentUser) {
+    try {
+      fetch(state.apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: 'saveSettings',
+          username: state.currentUser.username,
+          paydayCutoff: val
+        })
+      });
+    } catch (e) {}
+  }
+
   showToast(`Siklus gajian disimpan! (Cut-off Tanggal ${val})`, 'success');
   updateAllViews();
 }
@@ -429,11 +443,13 @@ function updateMonthDisplays() {
   }
 }
 
-// Calculate Total Sum of All Category Budgets
-function getTotalCategoryBudgetSum() {
+// Calculate Total Sum of Category Budgets for specified or current sub-tab type
+function getTotalCategoryBudgetSum(type) {
+  const currentType = type || state.budgetAllocType || 'pengeluaran';
+  const catList = state.categories[currentType] || [];
   let total = 0;
-  Object.values(state.categoryBudgets || {}).forEach(val => {
-    total += parseFloat(val) || 0;
+  catList.forEach(cat => {
+    total += parseFloat(state.categoryBudgets[cat]) || 0;
   });
   return total;
 }
@@ -662,6 +678,23 @@ function setBudgetAllocationType(type) {
   renderCategoryBudgetInputs();
 }
 
+function updateCategoryBudgetLiveTotal() {
+  const container = document.getElementById('categoryBudgetInputsList');
+  const badge = document.getElementById('totalBudgetAllocationBadge');
+  if (!container || !badge) return;
+
+  let liveTotal = 0;
+  const inputs = container.querySelectorAll('input[data-cat]');
+  inputs.forEach(input => {
+    const catName = input.getAttribute('data-cat');
+    const val = unformatIDR(input.value);
+    state.categoryBudgets[catName] = val;
+    liveTotal += val;
+  });
+
+  badge.innerText = `Total: Rp ${formatIDR(liveTotal)}`;
+}
+
 function renderCategoryBudgetInputs() {
   const container = document.getElementById('categoryBudgetInputsList');
   const badge = document.getElementById('totalBudgetAllocationBadge');
@@ -680,7 +713,7 @@ function renderCategoryBudgetInputs() {
         <span class="text-xs font-semibold text-slate-700 flex-1 truncate">${cat}</span>
         <div class="relative w-36">
           <span class="absolute left-2.5 top-1.5 text-slate-400 font-bold text-[11px]">Rp</span>
-          <input type="text" id="catBudget_${idx}" data-cat="${cat}" value="${formattedVal}" inputmode="numeric" pattern="[0-9]*" oninput="formatNumberInput(this)" placeholder="0" class="w-full pl-8 pr-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+          <input type="text" id="catBudget_${idx}" data-cat="${cat}" value="${formattedVal}" inputmode="numeric" oninput="formatNumberInput(this); updateCategoryBudgetLiveTotal();" placeholder="0" class="w-full pl-8 pr-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500">
         </div>
       </div>
     `;
@@ -688,8 +721,8 @@ function renderCategoryBudgetInputs() {
 
   container.innerHTML = html;
 
-  // Update total badge
-  const totalSum = getTotalCategoryBudgetSum();
+  // Update total badge for current sub-tab
+  const totalSum = getTotalCategoryBudgetSum(currentType);
   if (badge) badge.innerText = `Total: Rp ${formatIDR(totalSum)}`;
 }
 
@@ -705,6 +738,20 @@ function saveAllCategoryBudgets() {
   });
 
   localStorage.setItem('app_category_budgets', JSON.stringify(state.categoryBudgets));
+
+  if (state.apiUrl && state.currentUser) {
+    try {
+      fetch(state.apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: 'saveSettings',
+          username: state.currentUser.username,
+          categoryBudgets: state.categoryBudgets
+        })
+      });
+    } catch (e) {}
+  }
 
   showToast('Alokasi dana per kategori berhasil disimpan!', 'success');
   updateAllViews();
@@ -1116,7 +1163,10 @@ async function handleSaveTransaction(e) {
           nama: nama,
           kategori: kategori,
           jumlah: jumlah,
-          keterangan: keterangan
+          keterangan: keterangan,
+          wallet: type === 'tabungan' ? formWalletSource : formWallet,
+          walletSource: type === 'tabungan' ? formWalletSource : formWallet,
+          walletDestination: type === 'tabungan' ? formWalletDest : (type === 'pemasukan' ? formWallet : '')
         })
       });
       showToast('Transaksi berhasil disimpan ke Spreadsheet!', 'success');
