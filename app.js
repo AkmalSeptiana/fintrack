@@ -1018,7 +1018,7 @@ function formatIDR(val) {
 
 function unformatIDR(str) {
   if (!str) return 0;
-  return parseInt(str.toString().replace(/\./g, ''), 10) || 0;
+  return parseInt(str.toString().replace(/[^\d]/g, ''), 10) || 0;
 }
 
 function formatNumberInput(inputEl) {
