@@ -26,6 +26,13 @@ const state = {
   apiUrl: localStorage.getItem('app_api_url') || '',
   paydayCutoff: parseInt(localStorage.getItem('app_payday_cutoff')) || 26, // Default 26 for payday cycle (26-25)
   categoryBudgets: JSON.parse(localStorage.getItem('app_category_budgets')) || defaultCategoryBudgets,
+  wallets: JSON.parse(localStorage.getItem('app_wallets')) || [
+    'Tunai (Cash)',
+    'Bank BCA',
+    'Bank Mandiri',
+    'E-Wallet (GoPay/OVO/DANA)',
+    'Lainnya'
+  ],
   cashflowFilter: 'all', // 'all', 'pengeluaran', 'tabungan'
   budgetAllocType: 'pengeluaran', // 'pengeluaran', 'tabungan'
   selectedMonth: new Date(2026, 8, 1), // Default September 2026
@@ -50,19 +57,19 @@ const state = {
 // Default Mock Data for Instant Offline Demo
 const mockInitialData = {
   pemasukan: [
-    { rowId: 2, jenis: 'Gaji', tanggal: '2026-09-01', nama: 'Gaji Bulanan PT Akmal Jaya', jumlah: 8500000, keterangan: 'Gaji pokok september' },
-    { rowId: 3, jenis: 'Freelance & Sampingan', tanggal: '2026-09-12', nama: 'Project Website Client', jumlah: 2500000, keterangan: 'DP Project Web' }
+    { rowId: 2, jenis: 'Gaji', tanggal: '2026-09-01', nama: 'Gaji Bulanan PT Akmal Jaya', jumlah: 8500000, keterangan: 'Gaji pokok september', wallet: 'Bank BCA' },
+    { rowId: 3, jenis: 'Freelance & Sampingan', tanggal: '2026-09-12', nama: 'Project Website Client', jumlah: 2500000, keterangan: 'DP Project Web', wallet: 'Bank Mandiri' }
   ],
   pengeluaran: [
-    { rowId: 2, tanggal: '2026-09-02', nama: 'Belanja Bulanan Supermarket', kategori: 'Belanja Bulanan', jumlah: 1250000, keterangan: 'Bahan makanan bulanan' },
-    { rowId: 3, tanggal: '2026-09-05', nama: 'Bayar Listrik & WiFi', kategori: 'Tagihan & Utilitas', jumlah: 650000, keterangan: 'PLN + IndiHome' },
-    { rowId: 4, tanggal: '2026-09-10', nama: 'Makan Malam Nasi Goreng', kategori: 'Makanan & Minuman', jumlah: 45000, keterangan: 'Bersama kawan' },
-    { rowId: 5, tanggal: '2026-09-15', nama: 'Isi Bensin Pertamax', kategori: 'Transportasi', jumlah: 200000, keterangan: 'Motor matic' },
-    { rowId: 6, tanggal: '2026-09-18', nama: 'Nonton Bioskop & Snack', kategori: 'Hiburan & Rekreasi', jumlah: 175000, keterangan: 'Weekend film' }
+    { rowId: 2, tanggal: '2026-09-02', nama: 'Belanja Bulanan Supermarket', kategori: 'Belanja Bulanan', jumlah: 1250000, keterangan: 'Bahan makanan bulanan', wallet: 'Bank BCA' },
+    { rowId: 3, tanggal: '2026-09-05', nama: 'Bayar Listrik & WiFi', kategori: 'Tagihan & Utilitas', jumlah: 650000, keterangan: 'PLN + IndiHome', wallet: 'Bank Mandiri' },
+    { rowId: 4, tanggal: '2026-09-10', nama: 'Makan Malam Nasi Goreng', kategori: 'Makanan & Minuman', jumlah: 45000, keterangan: 'Bersama kawan', wallet: 'Tunai (Cash)' },
+    { rowId: 5, tanggal: '2026-09-15', nama: 'Isi Bensin Pertamax', kategori: 'Transportasi', jumlah: 200000, keterangan: 'Motor matic', wallet: 'Tunai (Cash)' },
+    { rowId: 6, tanggal: '2026-09-18', nama: 'Nonton Bioskop & Snack', kategori: 'Hiburan & Rekreasi', jumlah: 175000, keterangan: 'Weekend film', wallet: 'E-Wallet (GoPay/OVO/DANA)' }
   ],
   tabungan: [
-    { rowId: 2, tanggal: '2026-09-03', nama: 'Beli Emas Antam 1 gr', kategori: 'Emas / Logam Mulia', jumlah: 1300000, keterangan: 'Investasi rutin' },
-    { rowId: 3, tanggal: '2026-09-05', nama: 'Top Up Bibit Reksa Dana', kategori: 'Reksa Dana', jumlah: 1000000, keterangan: 'Pasar Uang' }
+    { rowId: 2, tanggal: '2026-09-03', nama: 'Beli Emas Antam 1 gr', kategori: 'Emas / Logam Mulia', jumlah: 1300000, keterangan: 'Investasi rutin', walletSource: 'Bank BCA', walletDestination: 'Emas / Logam Mulia' },
+    { rowId: 3, tanggal: '2026-09-05', nama: 'Top Up Bibit Reksa Dana', kategori: 'Reksa Dana', jumlah: 1000000, keterangan: 'Pasar Uang', walletSource: 'Bank Mandiri', walletDestination: 'Reksa Dana' }
   ]
 };
 
@@ -519,11 +526,18 @@ function updateAllViews() {
   document.getElementById('homeTotalExpense').innerText = 'Rp ' + formatIDR(totalExpense);
   document.getElementById('homeTotalSavings').innerText = 'Rp ' + formatIDR(totalSavings);
 
+  // Render Home Wallet Balances Grid
+  renderHomeWalletGrid();
+
   // Render Cashflow & Budgeting Sub Kategori Table
   renderCashflowTable(filteredPengeluaran, filteredTabungan);
 
   // Render Category Budget Inputs in Setting (Tab Akun)
   renderCategoryBudgetInputs();
+
+  // Render Wallet Dropdowns & Wallet Chips
+  renderWalletDropdowns();
+  renderWalletChips();
 
   // Render Aktivitas List
   renderAktivitasList(filteredPemasukan, filteredPengeluaran, filteredTabungan);
@@ -736,6 +750,163 @@ function saveAllCategoryBudgets() {
   updateAllViews();
 }
 
+// ==========================================
+// 6. WALLET & SALDO MANAGEMENT LOGIC
+// ==========================================
+
+function getWalletBalances() {
+  const balances = {};
+  (state.wallets || []).forEach(w => {
+    balances[w] = 0;
+  });
+
+  (state.data.pemasukan || []).forEach(i => {
+    const w = i.wallet || state.wallets[0] || 'Tunai (Cash)';
+    if (balances[w] === undefined) balances[w] = 0;
+    balances[w] += (i.jumlah || 0);
+  });
+
+  (state.data.pengeluaran || []).forEach(i => {
+    const w = i.wallet || state.wallets[0] || 'Tunai (Cash)';
+    if (balances[w] === undefined) balances[w] = 0;
+    balances[w] -= (i.jumlah || 0);
+  });
+
+  (state.data.tabungan || []).forEach(i => {
+    const wSrc = i.walletSource || i.wallet || state.wallets[0] || 'Tunai (Cash)';
+    const wDst = i.walletDestination || i.kategori || '';
+
+    if (balances[wSrc] === undefined) balances[wSrc] = 0;
+    balances[wSrc] -= (i.jumlah || 0);
+
+    if (wDst && state.wallets.includes(wDst)) {
+      if (balances[wDst] === undefined) balances[wDst] = 0;
+      balances[wDst] += (i.jumlah || 0);
+    }
+  });
+
+  return balances;
+}
+
+function renderHomeWalletGrid() {
+  const grid = document.getElementById('homeWalletGrid');
+  const badgeTotal = document.getElementById('homeTotalWalletBalance');
+  if (!grid) return;
+
+  const balances = getWalletBalances();
+  const walletList = state.wallets || [];
+  let totalKas = 0;
+  let html = '';
+
+  walletList.forEach(w => {
+    const bal = balances[w] || 0;
+    totalKas += bal;
+
+    let iconClass = 'fa-wallet text-emerald-500';
+    const lower = w.toLowerCase();
+    if (lower.includes('tunai') || lower.includes('cash')) iconClass = 'fa-money-bill-wave text-emerald-500';
+    else if (lower.includes('bank') || lower.includes('bca') || lower.includes('mandiri')) iconClass = 'fa-building-columns text-blue-500';
+    else if (lower.includes('wallet') || lower.includes('gopay') || lower.includes('ovo') || lower.includes('dana')) iconClass = 'fa-mobile-retro text-purple-500';
+
+    let balClass = 'text-xs font-bold text-slate-900';
+    let balStr = 'Rp ' + formatIDR(bal);
+    if (bal < 0) {
+      balClass = 'text-xs font-bold text-rose-600 bg-rose-50 px-1 py-0.5 rounded';
+      balStr = '-Rp ' + formatIDR(Math.abs(bal));
+    }
+
+    html += `
+      <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200/80 flex flex-col justify-between space-y-1 hover:bg-slate-100/80 transition">
+        <div class="flex items-center gap-1.5">
+          <i class="fa-solid ${iconClass} text-xs"></i>
+          <span class="text-[11px] font-bold text-slate-700 truncate">${w}</span>
+        </div>
+        <div class="${balClass}">
+          ${balStr}
+        </div>
+      </div>
+    `;
+  });
+
+  grid.innerHTML = html;
+  if (badgeTotal) badgeTotal.innerText = `Total Kas: Rp ${formatIDR(totalKas)}`;
+}
+
+function renderWalletDropdowns() {
+  const selectWallet = document.getElementById('formWallet');
+  const selectSource = document.getElementById('formWalletSource');
+  const selectDest = document.getElementById('formWalletDest');
+
+  const walletOptions = (state.wallets || []).map(w => `<option value="${w}">${w}</option>`).join('');
+
+  if (selectWallet) selectWallet.innerHTML = walletOptions;
+  if (selectSource) selectSource.innerHTML = walletOptions;
+
+  if (selectDest) {
+    const savCats = (state.categories.tabungan || []).map(c => `<option value="${c}">🎯 ${c}</option>`).join('');
+    const wallOpts = (state.wallets || []).map(w => `<option value="${w}">💳 ${w}</option>`).join('');
+    selectDest.innerHTML = `<optgroup label="Wadah Kategori Tabungan">${savCats}</optgroup><optgroup label="Rekening / Dompet Tujuan">${wallOpts}</optgroup>`;
+  }
+}
+
+function renderWalletChips() {
+  const container = document.getElementById('walletChipsList');
+  if (!container) return;
+
+  const list = state.wallets || [];
+  let html = '';
+
+  list.forEach(w => {
+    html += `
+      <div class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200">
+        <span>💳 ${w}</span>
+        <button onclick="deleteWallet('${w}')" class="text-slate-400 hover:text-rose-500 text-xs ml-1 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+function addNewWallet() {
+  const input = document.getElementById('newWalletInput');
+  if (!input) return;
+
+  const val = input.value.trim();
+  if (!val) {
+    showToast('Nama rekening / dompet tidak boleh kosong!', 'error');
+    return;
+  }
+
+  if (state.wallets.includes(val)) {
+    showToast('Nama dompet sudah ada!', 'warning');
+    return;
+  }
+
+  state.wallets.push(val);
+  localStorage.setItem('app_wallets', JSON.stringify(state.wallets));
+
+  input.value = '';
+  showToast(`Dompet "${val}" berhasil ditambahkan!`, 'success');
+  updateAllViews();
+}
+
+function deleteWallet(name) {
+  if (state.wallets.length <= 1) {
+    showToast('Minimal harus ada 1 dompet aktif!', 'warning');
+    return;
+  }
+
+  if (confirm(`Apakah Anda yakin ingin menghapus dompet "${name}"?`)) {
+    state.wallets = state.wallets.filter(w => w !== name);
+    localStorage.setItem('app_wallets', JSON.stringify(state.wallets));
+    showToast(`Dompet "${name}" dihapus`, 'info');
+    updateAllViews();
+  }
+}
+
 // Render Donut Chart with Chart.js
 function renderExpenseChart(pengeluaranList) {
   const canvas = document.getElementById('expenseChart');
@@ -893,7 +1064,35 @@ function setInputType(type) {
     }
   });
 
+  const walletSingleGroup = document.getElementById('walletSingleGroup');
+  const walletSavingsGroup = document.getElementById('walletSavingsGroup');
+  const formWalletLabel = document.getElementById('formWalletLabel');
+  const formNameInput = document.getElementById('formName');
+
+  if (formNameInput) {
+    if (type === 'pemasukan') formNameInput.placeholder = 'Contoh: Gaji Pokok / Bonus Client';
+    else if (type === 'pengeluaran') formNameInput.placeholder = 'Contoh: Makan Siang / Belanja Bulanan';
+    else if (type === 'tabungan') formNameInput.placeholder = 'Contoh: Top Up Emas / Bibit Reksa Dana';
+  }
+
+  if (type === 'tabungan') {
+    if (walletSingleGroup) walletSingleGroup.classList.add('hidden');
+    if (walletSavingsGroup) walletSavingsGroup.classList.remove('hidden');
+  } else {
+    if (walletSingleGroup) walletSingleGroup.classList.remove('hidden');
+    if (walletSavingsGroup) walletSavingsGroup.classList.add('hidden');
+
+    if (formWalletLabel) {
+      if (type === 'pemasukan') {
+        formWalletLabel.innerHTML = '<i class="fa-solid fa-wallet text-emerald-600"></i> 📥 Simpan Ke Saldo / Rekening';
+      } else {
+        formWalletLabel.innerHTML = '<i class="fa-solid fa-wallet text-emerald-600"></i> 📤 Diambil Dari Saldo / Rekening';
+      }
+    }
+  }
+
   renderCategoryDropdown();
+  renderWalletDropdowns();
 }
 
 function renderCategoryDropdown() {
@@ -916,6 +1115,10 @@ async function handleSaveTransaction(e) {
   const jumlah = unformatIDR(document.getElementById('formAmount').value);
   const keterangan = document.getElementById('formNote').value.trim();
 
+  const formWallet = document.getElementById('formWallet') ? document.getElementById('formWallet').value : (state.wallets[0] || 'Tunai (Cash)');
+  const formWalletSource = document.getElementById('formWalletSource') ? document.getElementById('formWalletSource').value : (state.wallets[0] || 'Tunai (Cash)');
+  const formWalletDest = document.getElementById('formWalletDest') ? document.getElementById('formWalletDest').value : kategori;
+
   if (!nama || !jumlah || jumlah <= 0) {
     showToast('Nama transaksi dan nominal harus diisi dengan benar!', 'error');
     return;
@@ -930,7 +1133,10 @@ async function handleSaveTransaction(e) {
     nama: nama,
     kategori: kategori,
     jumlah: jumlah,
-    keterangan: keterangan
+    keterangan: keterangan,
+    wallet: type === 'tabungan' ? formWalletSource : formWallet,
+    walletSource: type === 'tabungan' ? formWalletSource : formWallet,
+    walletDestination: type === 'tabungan' ? formWalletDest : (type === 'pemasukan' ? formWallet : '')
   };
 
   // Append to local state immediately
@@ -1052,6 +1258,15 @@ function renderAktivitasList(pemasukan, pengeluaran, tabungan) {
   let html = '';
   targetList.forEach(item => {
     const categoryTag = item.kategori || item.jenis || 'Umum';
+    let walletBadge = '';
+
+    if (item.walletSource && item.walletDestination) {
+      walletBadge = `<span class="text-[9px] font-semibold px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md border border-blue-200">💳 ${item.walletSource} ➔ ${item.walletDestination}</span>`;
+    } else if (item.wallet) {
+      const icon = currentType === 'pemasukan' ? '📥' : '📤';
+      walletBadge = `<span class="text-[9px] font-semibold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md border border-emerald-200">${icon} ${item.wallet}</span>`;
+    }
+
     html += `
       <div class="p-3 bg-slate-50 hover:bg-slate-100 rounded-2xl border border-slate-100 flex items-center justify-between transition">
         <div class="flex items-center gap-3">
@@ -1060,9 +1275,10 @@ function renderAktivitasList(pemasukan, pengeluaran, tabungan) {
           </div>
           <div>
             <h4 class="text-xs font-bold text-slate-800 line-clamp-1">${item.nama}</h4>
-            <div class="flex items-center gap-2 mt-0.5">
+            <div class="flex items-center flex-wrap gap-1.5 mt-0.5">
               <span class="text-[10px] text-slate-400">${item.tanggal}</span>
               <span class="text-[9px] font-semibold px-2 py-0.5 bg-white rounded-md border border-slate-200 text-slate-600">${categoryTag}</span>
+              ${walletBadge}
             </div>
           </div>
         </div>
