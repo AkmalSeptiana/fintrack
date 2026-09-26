@@ -130,7 +130,6 @@ function toggleAuthMode() {
   const submitText = document.getElementById('authBtnText');
   const toggleQuestion = document.getElementById('authToggleQuestion');
   const toggleBtn = document.getElementById('authToggleBtn');
-  const budgetGroup = document.getElementById('registerBudgetGroup');
 
   if (authIsRegister) {
     title.innerText = 'Daftar Akun Baru';
@@ -138,14 +137,12 @@ function toggleAuthMode() {
     submitText.innerText = 'Daftar Akun';
     toggleQuestion.innerText = 'Sudah punya akun?';
     toggleBtn.innerText = 'Masuk (Login)';
-    budgetGroup.classList.remove('hidden');
   } else {
     title.innerText = 'FinTrack';
     subtitle.innerText = 'Kelola Keuangan Pribadi dengan Cerdas & Rapi';
     submitText.innerText = 'Masuk Sekarang';
     toggleQuestion.innerText = 'Belum punya akun?';
     toggleBtn.innerText = 'Daftar Akun Baru';
-    budgetGroup.classList.add('hidden');
   }
 }
 
@@ -153,8 +150,6 @@ async function handleAuthSubmit(e) {
   e.preventDefault();
   const username = document.getElementById('authUsername').value.trim();
   const pin = document.getElementById('authPin').value.trim();
-  const budgetInput = document.getElementById('authMonthlyBudget').value;
-  const monthlyBudget = unformatIDR(budgetInput) || 5000000;
 
   if (!username || !pin) {
     showToast('Username dan PIN harus diisi!', 'error');
@@ -166,7 +161,7 @@ async function handleAuthSubmit(e) {
   if (state.apiUrl) {
     try {
       const action = authIsRegister ? 'register' : 'login';
-      const payload = { action, username, pin, monthlyBudget };
+      const payload = { action, username, pin };
       
       const response = await fetch(state.apiUrl, {
         method: 'POST',
@@ -176,7 +171,7 @@ async function handleAuthSubmit(e) {
       const res = await response.json();
 
       if (res.status === 'success') {
-        state.currentUser = res.user || { username, monthlyBudget, userId: 'USR-LOCAL' };
+        state.currentUser = res.user || { username, userId: 'USR-LOCAL' };
         localStorage.setItem('app_user', JSON.stringify(state.currentUser));
         showToast(res.message || 'Berhasil masuk!', 'success');
         hideAuthScreen();
@@ -186,13 +181,13 @@ async function handleAuthSubmit(e) {
       }
     } catch (err) {
       showToast('Koneksi API gagal, masuk dengan mode lokal', 'warning');
-      loginLocal(username, monthlyBudget);
+      loginLocal(username);
     } finally {
       showAuthSpinner(false);
     }
   } else {
     // Local Authentication fallback
-    loginLocal(username, monthlyBudget);
+    loginLocal(username);
     showAuthSpinner(false);
   }
 }
@@ -254,9 +249,6 @@ function updateUserHeader() {
   document.getElementById('userAvatarChar').innerText = username.charAt(0).toUpperCase();
   document.getElementById('profileAvatar').innerText = username.charAt(0).toUpperCase();
   document.getElementById('profileNameDisplay').innerText = username;
-  
-  const budgetInput = document.getElementById('budgetInput');
-  if (budgetInput) budgetInput.value = formatIDR(state.currentUser.monthlyBudget);
 
   const paydayCutoffSelect = document.getElementById('paydayCutoffSelect');
   if (paydayCutoffSelect) paydayCutoffSelect.value = state.paydayCutoff || 26;
@@ -336,34 +328,7 @@ async function saveApiUrl() {
   await fetchDataFromAPI();
 }
 
-// Save Monthly Budget Target
-async function saveMonthlyBudget() {
-  const val = unformatIDR(document.getElementById('budgetInput').value);
-  if (!val || val <= 0) {
-    showToast('Nominal anggaran tidak valid!', 'error');
-    return;
-  }
 
-  state.currentUser.monthlyBudget = val;
-  localStorage.setItem('app_user', JSON.stringify(state.currentUser));
-
-  if (state.apiUrl) {
-    try {
-      fetch(state.apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          action: 'updateBudget',
-          username: state.currentUser.username,
-          monthlyBudget: val
-        })
-      });
-    } catch (e) {}
-  }
-
-  showToast('Target Anggaran Bulanan berhasil disimpan!', 'success');
-  updateAllViews();
-}
 
 // Save Payday Cut-off Cycle Setting
 function savePaydayCutoff() {
@@ -503,7 +468,9 @@ function updateAllViews() {
 
   // Formula: Sisa Anggaran Bulanan = Pemasukan Bulanan - Pengeluaran Bulanan - Tabungan Bulanan
   const remainingBudget = totalIncome - totalExpense - totalSavings;
-  const totalCategoryBudget = getTotalCategoryBudgetSum();
+
+  // Target Anggaran = Total Pemasukan bulan tersebut
+  const targetBudget = totalIncome;
 
   // Render Home Card Values
   const homeRemainingBudget = document.getElementById('homeRemainingBudget');
@@ -519,7 +486,7 @@ function updateAllViews() {
 
   const homeTargetBudget = document.getElementById('homeTargetBudget');
   if (homeTargetBudget) {
-    homeTargetBudget.innerText = 'Rp ' + formatIDR(totalCategoryBudget);
+    homeTargetBudget.innerText = 'Rp ' + formatIDR(targetBudget);
   }
 
   document.getElementById('homeTotalIncome').innerText = 'Rp ' + formatIDR(totalIncome);
@@ -738,13 +705,6 @@ function saveAllCategoryBudgets() {
   });
 
   localStorage.setItem('app_category_budgets', JSON.stringify(state.categoryBudgets));
-  
-  // Update total target budget in user profile
-  const totalSum = getTotalCategoryBudgetSum();
-  if (state.currentUser) {
-    state.currentUser.monthlyBudget = totalSum;
-    localStorage.setItem('app_user', JSON.stringify(state.currentUser));
-  }
 
   showToast('Alokasi dana per kategori berhasil disimpan!', 'success');
   updateAllViews();
