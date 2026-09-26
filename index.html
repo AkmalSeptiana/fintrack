@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FinTrack - Kelola Keuangan Pribadi dengan Cerdas & Rapi</title>
-  
+
   <!-- PWA & Mobile Native Meta Tags -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#059669">
@@ -24,6 +25,7 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <!-- App Wrapper Container (Mobile View Layout) -->
@@ -32,16 +34,19 @@
     <!-- ========================================== -->
     <!-- 1. AUTH SCREEN (LOGIN & REGISTER)          -->
     <!-- ========================================== -->
-    <div id="authScreen" class="fixed inset-0 z-50 bg-slate-900 flex flex-col justify-center px-6 py-8 overflow-y-auto hidden">
+    <div id="authScreen"
+      class="fixed inset-0 z-50 bg-slate-900 flex flex-col justify-center px-6 py-8 overflow-y-auto hidden">
       <div class="max-w-sm w-full mx-auto bg-white rounded-3xl p-6 shadow-2xl modal-enter">
-        
+
         <!-- Logo / Header -->
         <div class="text-center mb-6">
-          <div class="w-16 h-16 bg-gradient-to-tr from-emerald-600 to-teal-400 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-lg shadow-emerald-500/30">
+          <div
+            class="w-16 h-16 bg-gradient-to-tr from-emerald-600 to-teal-400 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-lg shadow-emerald-500/30">
             <i class="fa-solid fa-chart-line"></i>
           </div>
           <h1 class="text-2xl font-black text-slate-900 tracking-tight" id="authTitle">FinTrack</h1>
-          <p class="text-xs font-medium text-emerald-600 mt-1" id="authSubtitle">Kelola Keuangan Pribadi dengan Cerdas & Rapi</p>
+          <p class="text-xs font-medium text-emerald-600 mt-1" id="authSubtitle">Kelola Keuangan Pribadi dengan Cerdas &
+            Rapi</p>
         </div>
 
         <!-- Auth Form -->
@@ -51,7 +56,9 @@
             <label class="block text-xs font-semibold text-slate-600 mb-1">Target Anggaran Bulanan (IDR)</label>
             <div class="relative">
               <span class="absolute left-3 top-2.5 text-slate-400 text-sm font-semibold">Rp</span>
-              <input type="text" id="authMonthlyBudget" inputmode="numeric" pattern="[0-9]*" class="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800" placeholder="5.000.000" oninput="formatNumberInput(this)">
+              <input type="text" id="authMonthlyBudget" inputmode="numeric" pattern="[0-9]*"
+                class="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800"
+                placeholder="5.000.000" oninput="formatNumberInput(this)">
             </div>
           </div>
 
@@ -60,7 +67,9 @@
             <label class="block text-xs font-semibold text-slate-600 mb-1">Username / Nama</label>
             <div class="relative">
               <span class="absolute left-3 top-2.5 text-slate-400 text-sm"><i class="fa-solid fa-user"></i></span>
-              <input type="text" id="authUsername" required class="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800" placeholder="Masukkan username">
+              <input type="text" id="authUsername" required
+                class="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800"
+                placeholder="Masukkan username">
             </div>
           </div>
 
@@ -69,12 +78,15 @@
             <label class="block text-xs font-semibold text-slate-600 mb-1">PIN / Password (6 Digit)</label>
             <div class="relative">
               <span class="absolute left-3 top-2.5 text-slate-400 text-sm"><i class="fa-solid fa-lock"></i></span>
-              <input type="password" id="authPin" inputmode="numeric" pattern="[0-9]*" maxlength="12" required class="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800" placeholder="******">
+              <input type="password" id="authPin" inputmode="numeric" pattern="[0-9]*" maxlength="12" required
+                class="w-full pl-10 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800"
+                placeholder="******">
             </div>
           </div>
 
           <!-- Submit Button -->
-          <button type="submit" id="authSubmitBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition">
+          <button type="submit" id="authSubmitBtn"
+            class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition">
             <span id="authBtnText">Masuk Sekarang</span>
             <i id="authBtnSpinner" class="fa-solid fa-circle-notch fa-spin hidden"></i>
           </button>
@@ -83,7 +95,8 @@
         <!-- Toggle Login/Register -->
         <div class="mt-6 text-center text-xs text-slate-500">
           <span id="authToggleQuestion">Belum punya akun?</span>
-          <button type="button" onclick="toggleAuthMode()" id="authToggleBtn" class="font-bold text-emerald-600 hover:underline ml-1">Daftar Akun Baru</button>
+          <button type="button" onclick="toggleAuthMode()" id="authToggleBtn"
+            class="font-bold text-emerald-600 hover:underline ml-1">Daftar Akun Baru</button>
         </div>
 
       </div>
@@ -99,25 +112,31 @@
       <header class="bg-slate-900 text-white px-5 pt-5 pb-4 rounded-b-3xl shadow-lg relative">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg border border-emerald-500/30">
+            <div
+              class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg border border-emerald-500/30">
               <span id="userAvatarChar"></span>
             </div>
             <div>
-              <p class="text-[10px] text-emerald-400 uppercase tracking-widest font-extrabold flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-emerald-400"></i> FinTrack</p>
+              <p
+                class="text-[10px] text-emerald-400 uppercase tracking-widest font-extrabold flex items-center gap-1.5">
+                <i class="fa-solid fa-chart-line text-emerald-400"></i> FinTrack</p>
               <h2 class="text-base font-bold text-slate-100 flex items-center gap-1.5" id="headerUsername"></h2>
             </div>
           </div>
 
           <!-- Connection Status Indicator Badge -->
-          <div onclick="switchTab('akun')" class="cursor-pointer bg-slate-800/80 hover:bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 flex items-center gap-2 text-xs transition">
+          <div onclick="switchTab('akun')"
+            class="cursor-pointer bg-slate-800/80 hover:bg-slate-800 px-3 py-1.5 rounded-full border border-slate-700 flex items-center gap-2 text-xs transition">
             <span id="apiStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
             <span id="apiStatusText" class="text-[11px] font-medium text-slate-300">GAS Active</span>
           </div>
         </div>
 
         <!-- Header Month Selector Filter Bar -->
-        <div class="mt-4 bg-slate-800/90 backdrop-blur rounded-2xl p-2 flex items-center justify-between border border-slate-700/60 shadow-inner">
-          <button onclick="changeMonth(-1)" class="w-8 h-8 rounded-xl bg-slate-700/60 text-slate-300 hover:bg-slate-700 flex items-center justify-center text-xs active:scale-95 transition">
+        <div
+          class="mt-4 bg-slate-800/90 backdrop-blur rounded-2xl p-2 flex items-center justify-between border border-slate-700/60 shadow-inner">
+          <button onclick="changeMonth(-1)"
+            class="w-8 h-8 rounded-xl bg-slate-700/60 text-slate-300 hover:bg-slate-700 flex items-center justify-center text-xs active:scale-95 transition">
             <i class="fa-solid fa-chevron-left"></i>
           </button>
           <div class="text-center">
@@ -125,7 +144,8 @@
               <i class="fa-regular fa-calendar text-emerald-400"></i> September 2026
             </span>
           </div>
-          <button onclick="changeMonth(1)" class="w-8 h-8 rounded-xl bg-slate-700/60 text-slate-300 hover:bg-slate-700 flex items-center justify-center text-xs active:scale-95 transition">
+          <button onclick="changeMonth(1)"
+            class="w-8 h-8 rounded-xl bg-slate-700/60 text-slate-300 hover:bg-slate-700 flex items-center justify-center text-xs active:scale-95 transition">
             <i class="fa-solid fa-chevron-right"></i>
           </button>
         </div>
@@ -142,11 +162,14 @@
           <!-- Main Balance Gradient Card -->
           <div class="bg-emerald-gradient rounded-3xl p-5 text-white shadow-xl relative overflow-hidden">
             <!-- Background Decorative Circle -->
-            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+            <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none">
+            </div>
 
             <div class="flex items-center justify-between mb-1">
-              <span class="text-xs font-medium text-emerald-100/90 uppercase tracking-wider">Sisa Anggaran Bulanan</span>
-              <span class="text-[11px] bg-white/20 backdrop-blur px-2.5 py-0.5 rounded-full text-white font-medium" id="homeMonthBadge">Sep 2026</span>
+              <span class="text-xs font-medium text-emerald-100/90 uppercase tracking-wider">Sisa Anggaran
+                Bulanan</span>
+              <span class="text-[11px] bg-white/20 backdrop-blur px-2.5 py-0.5 rounded-full text-white font-medium"
+                id="homeMonthBadge">Sep 2026</span>
             </div>
 
             <!-- Remaining Budget -->
@@ -174,45 +197,43 @@
             </div>
           </div>
 
-          <!-- Visual Chart.js Donut Chart Card -->
-          <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
-            <div class="flex items-center justify-between mb-3">
-              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <i class="fa-solid fa-chart-pie text-emerald-600"></i> Breakdown Pengeluaran
-              </h3>
-              <span class="text-[10px] font-semibold text-slate-400" id="chartTotalCount">0 Kategori</span>
-            </div>
-            
-            <div class="relative w-full h-48 flex items-center justify-center">
-              <canvas id="expenseChart"></canvas>
-              <!-- Center Text Indicator -->
-              <div id="chartCenterText" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center hidden">
-                <span class="text-[10px] text-slate-400 font-medium">Total</span>
-                <span class="text-xs font-bold text-slate-700" id="chartCenterTotal">Rp 0</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Interactive Ranking Widget (Pengeluaran Category Ranking) -->
-          <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
-            <div class="flex items-center justify-between mb-3">
+          <!-- Cashflow & Budgeting Sub Kategori Card -->
+          <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                  <i class="fa-solid fa-ranking-star text-amber-500"></i> Ranking Pengeluaran
+                <h3 class="text-sm font-extrabold text-slate-800 flex items-center gap-2">
+                  <i class="fa-solid fa-table-list text-emerald-600"></i> Cashflow & Budgeting Sub Kategori
                 </h3>
-                <p class="text-[11px] text-slate-400">Kategori dengan konsumsi anggaran terbanyak</p>
+                <p class="text-[11px] text-slate-400">Rencana vs Aktual pengeluaran & tabungan terpotong</p>
               </div>
 
-              <!-- Sort Toggle Button -->
-              <button onclick="toggleRankingSort()" id="sortToggleBtn" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 rounded-xl text-[11px] font-semibold text-slate-600 flex items-center gap-1 transition">
-                <i class="fa-solid fa-arrow-down-wide-short"></i> <span id="sortLabel">Tertinggi</span>
-              </button>
+              <!-- Filter Sub Tabs -->
+              <div class="flex bg-slate-100 p-1 rounded-xl gap-0.5 self-start sm:self-auto">
+                <button onclick="setCashflowFilter('all')" id="cashflowFilterAll" class="px-2 py-1 text-[10px] font-bold rounded-lg text-emerald-700 bg-white shadow-xs">Semua</button>
+                <button onclick="setCashflowFilter('pengeluaran')" id="cashflowFilterPengeluaran" class="px-2 py-1 text-[10px] font-bold rounded-lg text-slate-500">Pengeluaran</button>
+                <button onclick="setCashflowFilter('tabungan')" id="cashflowFilterTabungan" class="px-2 py-1 text-[10px] font-bold rounded-lg text-slate-500">Tabungan</button>
+              </div>
             </div>
 
-            <!-- Category Ranking List -->
-            <div id="rankingList" class="space-y-3">
-              <!-- Dynamic JS insertion -->
-              <div class="text-center py-6 text-slate-400 text-xs">Belum ada data pengeluaran bulan ini</div>
+            <!-- Table Responsive Wrapper -->
+            <div class="overflow-x-auto rounded-2xl border border-amber-200/80 shadow-xs">
+              <table class="w-full text-xs text-left min-w-[480px]">
+                <thead class="bg-amber-100/80 text-slate-800 font-extrabold border-b border-amber-200">
+                  <tr>
+                    <th class="py-2.5 px-3">Nama sub kategori</th>
+                    <th class="py-2.5 px-3 text-right">Budget</th>
+                    <th class="py-2.5 px-3 text-right">Aktual</th>
+                    <th class="py-2.5 px-3 text-right">Sisa budget</th>
+                    <th class="py-2.5 px-3 text-right">Persentase terpakai</th>
+                  </tr>
+                </thead>
+                <tbody id="cashflowTableBody" class="divide-y divide-slate-100 text-slate-700 font-medium">
+                  <!-- Dynamic JS Rows -->
+                </tbody>
+                <tfoot id="cashflowTableFooter" class="bg-amber-50/70 font-extrabold text-slate-900 border-t border-amber-200">
+                  <!-- Dynamic Total Row -->
+                </tfoot>
+              </table>
             </div>
           </div>
 
@@ -224,20 +245,23 @@
         <!-- ========================================== -->
         <section id="tabInput" class="space-y-4 hidden">
           <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
-            
+
             <h2 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
               <i class="fa-solid fa-circle-plus text-emerald-600"></i> Tambah Transaksi Baru
             </h2>
 
             <!-- Quick Type Selector Tabs -->
             <div class="grid grid-cols-3 gap-2 p-1.5 bg-slate-100 rounded-2xl mb-5">
-              <button type="button" onclick="setInputType('pemasukan')" id="btnTypePemasukan" class="tab-btn py-2 text-xs rounded-xl font-medium text-slate-600 flex items-center justify-center gap-1">
+              <button type="button" onclick="setInputType('pemasukan')" id="btnTypePemasukan"
+                class="tab-btn py-2 text-xs rounded-xl font-medium text-slate-600 flex items-center justify-center gap-1">
                 📥 Pemasukan
               </button>
-              <button type="button" onclick="setInputType('pengeluaran')" id="btnTypePengeluaran" class="tab-btn active py-2 text-xs rounded-xl font-medium text-slate-600 flex items-center justify-center gap-1">
+              <button type="button" onclick="setInputType('pengeluaran')" id="btnTypePengeluaran"
+                class="tab-btn active py-2 text-xs rounded-xl font-medium text-slate-600 flex items-center justify-center gap-1">
                 📤 Pengeluaran
               </button>
-              <button type="button" onclick="setInputType('tabungan')" id="btnTypeTabungan" class="tab-btn py-2 text-xs rounded-xl font-medium text-slate-600 flex items-center justify-center gap-1">
+              <button type="button" onclick="setInputType('tabungan')" id="btnTypeTabungan"
+                class="tab-btn py-2 text-xs rounded-xl font-medium text-slate-600 flex items-center justify-center gap-1">
                 🏦 Tabungan
               </button>
             </div>
@@ -249,19 +273,22 @@
               <!-- Date Input -->
               <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Transaksi</label>
-                <input type="date" id="formDate" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800">
+                <input type="date" id="formDate" required
+                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800">
               </div>
 
               <!-- Transaction Title / Name -->
               <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Nama / Judul Transaksi</label>
-                <input type="text" id="formName" required placeholder="Contoh: Makan Siang Nasi Padang" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800">
+                <input type="text" id="formName" required placeholder="Contoh: Makan Siang Nasi Padang"
+                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800">
               </div>
 
               <!-- Category Dropdown -->
               <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Kategori</label>
-                <select id="formCategory" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800">
+                <select id="formCategory" required
+                  class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800">
                   <!-- Dynamic JS options -->
                 </select>
               </div>
@@ -271,18 +298,22 @@
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Nominal (IDR)</label>
                 <div class="relative">
                   <span class="absolute left-3.5 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
-                  <input type="text" id="formAmount" inputmode="numeric" pattern="[0-9]*" required placeholder="0" oninput="formatNumberInput(this)" class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base font-bold text-slate-800">
+                  <input type="text" id="formAmount" inputmode="numeric" pattern="[0-9]*" required placeholder="0"
+                    oninput="formatNumberInput(this)"
+                    class="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base font-bold text-slate-800">
                 </div>
               </div>
 
               <!-- Note / Keterangan -->
               <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Catatan / Keterangan (Opsional)</label>
-                <textarea id="formNote" rows="2" placeholder="Catatan tambahan..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800"></textarea>
+                <textarea id="formNote" rows="2" placeholder="Catatan tambahan..."
+                  class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800"></textarea>
               </div>
 
               <!-- Big Save Button -->
-              <button type="submit" id="saveTransactionBtn" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl text-sm shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition active:scale-98 mt-6">
+              <button type="submit" id="saveTransactionBtn"
+                class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl text-sm shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 transition active:scale-98 mt-6">
                 <i class="fa-solid fa-floppy-disk"></i>
                 <span id="saveBtnText">Simpan Transaksi</span>
                 <i id="saveBtnSpinner" class="fa-solid fa-circle-notch fa-spin hidden"></i>
@@ -298,23 +329,27 @@
         <!-- ========================================== -->
         <section id="tabAktivitas" class="space-y-4 hidden">
           <div class="bg-white rounded-3xl p-4 shadow-sm border border-slate-100">
-            
+
             <div class="flex items-center justify-between mb-3">
               <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
                 <i class="fa-solid fa-list-check text-emerald-600"></i> Riwayat Transaksi
               </h2>
-              <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full" id="aktivitasMonthBadge">Sep 2026</span>
+              <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full"
+                id="aktivitasMonthBadge">Sep 2026</span>
             </div>
 
             <!-- Sub-tabs Selector -->
             <div class="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 rounded-2xl mb-4">
-              <button onclick="setAktivitasSubTab('pemasukan')" id="subTabPemasukan" class="tab-btn py-2 text-xs rounded-xl font-medium text-slate-600 text-center">
+              <button onclick="setAktivitasSubTab('pemasukan')" id="subTabPemasukan"
+                class="tab-btn py-2 text-xs rounded-xl font-medium text-slate-600 text-center">
                 📥 Pemasukan
               </button>
-              <button onclick="setAktivitasSubTab('pengeluaran')" id="subTabPengeluaran" class="tab-btn active py-2 text-xs rounded-xl font-medium text-slate-600 text-center">
+              <button onclick="setAktivitasSubTab('pengeluaran')" id="subTabPengeluaran"
+                class="tab-btn active py-2 text-xs rounded-xl font-medium text-slate-600 text-center">
                 📤 Pengeluaran
               </button>
-              <button onclick="setAktivitasSubTab('tabungan')" id="subTabTabungan" class="tab-btn py-2 text-xs rounded-xl font-medium text-slate-600 text-center">
+              <button onclick="setAktivitasSubTab('tabungan')" id="subTabTabungan"
+                class="tab-btn py-2 text-xs rounded-xl font-medium text-slate-600 text-center">
                 🏦 Tabungan
               </button>
             </div>
@@ -325,8 +360,10 @@
             </div>
 
             <!-- Total Amount Calculation Footer -->
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between bg-slate-50 p-3 rounded-2xl">
-              <span class="text-xs font-bold text-slate-600" id="totalAktivitasLabel">Total Pengeluaran Bulan Ini:</span>
+            <div
+              class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between bg-slate-50 p-3 rounded-2xl">
+              <span class="text-xs font-bold text-slate-600" id="totalAktivitasLabel">Total Pengeluaran Bulan
+                Ini:</span>
               <span class="text-sm font-black text-slate-900" id="totalAktivitasValue">Rp 0</span>
             </div>
 
@@ -338,11 +375,12 @@
         <!-- TAB 4: ⚙️ AKUN TAB                         -->
         <!-- ========================================== -->
         <section id="tabAkun" class="space-y-4 hidden">
-          
+
           <!-- User Profile & Target Budget Editor -->
           <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
             <div class="flex items-center gap-4 mb-4">
-              <div class="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-2xl shadow-lg shadow-emerald-600/30">
+              <div
+                class="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-2xl shadow-lg shadow-emerald-600/30">
                 <span id="profileAvatar">A</span>
               </div>
               <div>
@@ -357,13 +395,38 @@
               <div class="flex gap-2">
                 <div class="relative flex-1">
                   <span class="absolute left-3 top-2.5 text-slate-400 font-bold text-xs">Rp</span>
-                  <input type="text" id="budgetInput" inputmode="numeric" pattern="[0-9]*" oninput="formatNumberInput(this)" class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800">
+                  <input type="text" id="budgetInput" inputmode="numeric" pattern="[0-9]*"
+                    oninput="formatNumberInput(this)"
+                    class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800">
                 </div>
-                <button onclick="saveMonthlyBudget()" class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl shadow hover:bg-emerald-700 transition">
+                <button onclick="saveMonthlyBudget()"
+                  class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl shadow hover:bg-emerald-700 transition">
                   Simpan
                 </button>
-              </div>
+          <!-- Alokasi Dana per Kategori Card (Budgeting Setting) -->
+          <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-bullseye text-emerald-600"></i> Alokasi Dana per Kategori
+              </h3>
+              <span class="text-[10px] font-extrabold px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full" id="totalBudgetAllocationBadge">Total: Rp 0</span>
             </div>
+            <p class="text-xs text-slate-500 mb-3">Atur alokasi rencana anggaran (Budget) untuk tiap kategori.</p>
+
+            <!-- Type Selector Tabs -->
+            <div class="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl mb-3">
+              <button onclick="setBudgetAllocationType('pengeluaran')" id="budgetAllocTypePengeluaran" class="tab-btn active py-1.5 text-[11px] font-semibold rounded-lg">📤 Pengeluaran</button>
+              <button onclick="setBudgetAllocationType('tabungan')" id="budgetAllocTypeTabungan" class="tab-btn py-1.5 text-[11px] font-semibold rounded-lg">🏦 Tabungan</button>
+            </div>
+
+            <!-- Dynamic List of Category Budget Inputs -->
+            <div id="categoryBudgetInputsList" class="space-y-2 max-h-72 overflow-y-auto pr-1">
+              <!-- Dynamic JS content -->
+            </div>
+
+            <button onclick="saveAllCategoryBudgets()" class="w-full mt-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-floppy-disk"></i> Simpan Alokasi Dana
+            </button>
           </div>
 
           <!-- Siklus Gajian & Cut-off Periode Card -->
@@ -371,16 +434,19 @@
             <h3 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-2">
               <i class="fa-solid fa-calendar-days text-emerald-600"></i> Siklus Gajian & Cut-off Periode
             </h3>
-            <p class="text-xs text-slate-500 mb-3">Tentukan tanggal mulai gajian Anda untuk memfilter anggaran bulanan (contoh: 26 Sep - 25 Okt).</p>
+            <p class="text-xs text-slate-500 mb-3">Tentukan tanggal mulai gajian Anda untuk memfilter anggaran bulanan
+              (contoh: 26 Sep - 25 Okt).</p>
             <div class="flex gap-2">
-              <select id="paydayCutoffSelect" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <select id="paydayCutoffSelect"
+                class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 <option value="1">Tanggal 1 (Kalender Standar: 1 - 31)</option>
                 <option value="25">Tanggal 25 (Siklus Gajian 25 - 24)</option>
                 <option value="26">Tanggal 26 (Siklus Gajian 26 - 25)</option>
                 <option value="27">Tanggal 27 (Siklus Gajian 27 - 26)</option>
                 <option value="28">Tanggal 28 (Siklus Gajian 28 - 27)</option>
               </select>
-              <button onclick="savePaydayCutoff()" class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl shadow hover:bg-emerald-700 transition">
+              <button onclick="savePaydayCutoff()"
+                class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl shadow hover:bg-emerald-700 transition">
                 Simpan
               </button>
             </div>
@@ -393,13 +459,16 @@
               <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
                 <i class="fa-solid fa-link text-emerald-600"></i> Koneksi Google Apps Script
               </h3>
-              <span id="apiStatusBadge" class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Terhubung</span>
+              <span id="apiStatusBadge"
+                class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Terhubung</span>
             </div>
             <p class="text-xs text-slate-500 mb-3">Masukkan URL Web App hasil deploy Google Apps Script Anda:</p>
 
             <div class="space-y-3">
-              <input type="url" id="apiUrlInput" placeholder="https://script.google.com/macros/s/.../exec" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-mono">
-              <button onclick="saveApiUrl()" class="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-slate-800 transition">
+              <input type="url" id="apiUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
+                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-mono">
+              <button onclick="saveApiUrl()"
+                class="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-slate-800 transition">
                 <i class="fa-solid fa-plug"></i> Simpan & Tes Koneksi API
               </button>
             </div>
@@ -413,15 +482,20 @@
 
             <!-- Category Type Selector -->
             <div class="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-xl mb-3">
-              <button onclick="setCategoryManagerType('pengeluaran')" id="catTypePengeluaran" class="tab-btn active py-1.5 text-[11px] rounded-lg">Pengeluaran</button>
-              <button onclick="setCategoryManagerType('tabungan')" id="catTypeTabungan" class="tab-btn py-1.5 text-[11px] rounded-lg">Tabungan</button>
-              <button onclick="setCategoryManagerType('pemasukan')" id="catTypePemasukan" class="tab-btn py-1.5 text-[11px] rounded-lg">Pemasukan</button>
+              <button onclick="setCategoryManagerType('pengeluaran')" id="catTypePengeluaran"
+                class="tab-btn active py-1.5 text-[11px] rounded-lg">Pengeluaran</button>
+              <button onclick="setCategoryManagerType('tabungan')" id="catTypeTabungan"
+                class="tab-btn py-1.5 text-[11px] rounded-lg">Tabungan</button>
+              <button onclick="setCategoryManagerType('pemasukan')" id="catTypePemasukan"
+                class="tab-btn py-1.5 text-[11px] rounded-lg">Pemasukan</button>
             </div>
 
             <!-- Add Category Input -->
             <div class="flex gap-2 mb-3">
-              <input type="text" id="newCategoryInput" placeholder="Nama Kategori Baru..." class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-              <button onclick="addNewCategory()" class="px-3.5 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-700 transition">
+              <input type="text" id="newCategoryInput" placeholder="Nama Kategori Baru..."
+                class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+              <button onclick="addNewCategory()"
+                class="px-3.5 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-700 transition">
                 + Tambah
               </button>
             </div>
@@ -433,9 +507,11 @@
           </div>
 
           <!-- PWA Install App Card -->
-          <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-5 shadow-lg text-white border border-slate-700">
+          <div
+            class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-5 shadow-lg text-white border border-slate-700">
             <div class="flex items-center gap-3 mb-3">
-              <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/30">
+              <div
+                class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/30">
                 <i class="fa-solid fa-mobile-screen-button"></i>
               </div>
               <div>
@@ -443,7 +519,8 @@
                 <p class="text-[11px] text-slate-300">Gunakan layaknya aplikasi native Android / iOS</p>
               </div>
             </div>
-            <button id="pwaInstallBtn" onclick="installPWAApp()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
+            <button id="pwaInstallBtn" onclick="installPWAApp()"
+              class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
               <i class="fa-solid fa-download"></i> Install Aplikasi Sekarang
             </button>
           </div>
@@ -454,11 +531,13 @@
               <i class="fa-solid fa-shield-halved text-emerald-600"></i> Keamanan & Akun
             </h3>
             <div class="space-y-2">
-              <button onclick="showChangePinModal()" class="w-full py-2.5 px-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-xs font-semibold text-slate-700 text-left flex items-center justify-between border border-slate-200">
+              <button onclick="showChangePinModal()"
+                class="w-full py-2.5 px-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-xs font-semibold text-slate-700 text-left flex items-center justify-between border border-slate-200">
                 <span>Ubah PIN / Password</span>
                 <i class="fa-solid fa-chevron-right text-slate-400"></i>
               </button>
-              <button onclick="handleLogout()" class="w-full py-2.5 px-3 bg-rose-50 hover:bg-rose-100 rounded-xl text-xs font-bold text-rose-600 text-left flex items-center justify-between border border-rose-200">
+              <button onclick="handleLogout()"
+                class="w-full py-2.5 px-3 bg-rose-50 hover:bg-rose-100 rounded-xl text-xs font-bold text-rose-600 text-left flex items-center justify-between border border-rose-200">
                 <span>Keluar (Logout)</span>
                 <i class="fa-solid fa-right-from-bracket text-rose-500"></i>
               </button>
@@ -472,26 +551,32 @@
       <!-- ========================================== -->
       <!-- BOTTOM NAVIGATION BAR                      -->
       <!-- ========================================== -->
-      <nav class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto glass-nav z-40 px-4 py-2 flex items-center justify-around rounded-t-3xl">
-        
-        <button onclick="switchTab('home')" id="navHome" class="nav-item active flex flex-col items-center gap-1 text-slate-400 py-1">
+      <nav
+        class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto glass-nav z-40 px-4 py-2 flex items-center justify-around rounded-t-3xl">
+
+        <button onclick="switchTab('home')" id="navHome"
+          class="nav-item active flex flex-col items-center gap-1 text-slate-400 py-1">
           <i class="fa-solid fa-house text-lg"></i>
           <span class="text-[10px] font-semibold">Home</span>
         </button>
 
-        <button onclick="switchTab('input')" id="navInput" class="nav-item flex flex-col items-center gap-1 text-slate-400 py-1">
-          <div class="w-10 h-10 -mt-5 bg-emerald-600 text-white rounded-full flex items-center justify-center text-lg shadow-lg shadow-emerald-600/40 border-4 border-slate-50 active:scale-90 transition">
+        <button onclick="switchTab('input')" id="navInput"
+          class="nav-item flex flex-col items-center gap-1 text-slate-400 py-1">
+          <div
+            class="w-10 h-10 -mt-5 bg-emerald-600 text-white rounded-full flex items-center justify-center text-lg shadow-lg shadow-emerald-600/40 border-4 border-slate-50 active:scale-90 transition">
             <i class="fa-solid fa-plus"></i>
           </div>
           <span class="text-[10px] font-semibold">Input</span>
         </button>
 
-        <button onclick="switchTab('aktivitas')" id="navAktivitas" class="nav-item flex flex-col items-center gap-1 text-slate-400 py-1">
+        <button onclick="switchTab('aktivitas')" id="navAktivitas"
+          class="nav-item flex flex-col items-center gap-1 text-slate-400 py-1">
           <i class="fa-solid fa-clock-rotate-left text-lg"></i>
           <span class="text-[10px] font-semibold">Aktivitas</span>
         </button>
 
-        <button onclick="switchTab('akun')" id="navAkun" class="nav-item flex flex-col items-center gap-1 text-slate-400 py-1">
+        <button onclick="switchTab('akun')" id="navAkun"
+          class="nav-item flex flex-col items-center gap-1 text-slate-400 py-1">
           <i class="fa-solid fa-user text-lg"></i>
           <span class="text-[10px] font-semibold">Akun</span>
         </button>
@@ -501,22 +586,28 @@
     </div>
 
     <!-- Modal Change PIN -->
-    <div id="changePinModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div id="changePinModal"
+      class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
       <div class="bg-white rounded-3xl p-6 w-full max-w-xs shadow-2xl modal-enter">
         <h3 class="text-base font-bold text-slate-800 mb-3">Ubah PIN Akun</h3>
         <div class="space-y-3">
-          <input type="password" id="pinOld" inputmode="numeric" pattern="[0-9]*" placeholder="PIN Lama" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm">
-          <input type="password" id="pinNew" inputmode="numeric" pattern="[0-9]*" placeholder="PIN Baru" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+          <input type="password" id="pinOld" inputmode="numeric" pattern="[0-9]*" placeholder="PIN Lama"
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+          <input type="password" id="pinNew" inputmode="numeric" pattern="[0-9]*" placeholder="PIN Baru"
+            class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm">
         </div>
         <div class="flex gap-2 mt-4">
-          <button onclick="closeChangePinModal()" class="flex-1 py-2 bg-slate-100 text-slate-600 font-semibold text-xs rounded-xl">Batal</button>
-          <button onclick="submitChangePin()" class="flex-1 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow hover:bg-emerald-700">Simpan</button>
+          <button onclick="closeChangePinModal()"
+            class="flex-1 py-2 bg-slate-100 text-slate-600 font-semibold text-xs rounded-xl">Batal</button>
+          <button onclick="submitChangePin()"
+            class="flex-1 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl shadow hover:bg-emerald-700">Simpan</button>
         </div>
       </div>
     </div>
 
     <!-- Notification Toast Bar -->
-    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none">
+    <div id="toast"
+      class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 transition-all duration-300 opacity-0 pointer-events-none">
       <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
       <span id="toastMsg">Pesan Notifikasi</span>
     </div>
@@ -526,4 +617,5 @@
   <!-- Custom JavaScript Logic -->
   <script src="app.js"></script>
 </body>
+
 </html>

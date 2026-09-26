@@ -5,11 +5,29 @@
  * ==============================================================================
  */
 
+// Default Category Budgets Allocation (Initial Fallback)
+const defaultCategoryBudgets = {
+  'Makanan & Minuman': 1500000,
+  'Belanja Bulanan': 1500000,
+  'Transportasi': 500000,
+  'Tagihan & Utilitas': 800000,
+  'Hiburan & Rekreasi': 400000,
+  'Kesehatan & Medis': 300000,
+  'Lainnya': 200000,
+  'Tabungan Darurat': 1000000,
+  'Reksa Dana': 1000000,
+  'Emas / Logam Mulia': 1300000,
+  'Investasi Saham': 500000
+};
+
 // Global State Management
 const state = {
   currentUser: JSON.parse(localStorage.getItem('app_user')) || null,
   apiUrl: localStorage.getItem('app_api_url') || '',
   paydayCutoff: parseInt(localStorage.getItem('app_payday_cutoff')) || 26, // Default 26 for payday cycle (26-25)
+  categoryBudgets: JSON.parse(localStorage.getItem('app_category_budgets')) || defaultCategoryBudgets,
+  cashflowFilter: 'all', // 'all', 'pengeluaran', 'tabungan'
+  budgetAllocType: 'pengeluaran', // 'pengeluaran', 'tabungan'
   selectedMonth: new Date(2026, 8, 1), // Default September 2026
   currentTab: 'home',
   inputType: 'pengeluaran',
@@ -439,6 +457,15 @@ function updateMonthDisplays() {
   }
 }
 
+// Calculate Total Sum of All Category Budgets
+function getTotalCategoryBudgetSum() {
+  let total = 0;
+  Object.values(state.categoryBudgets || {}).forEach(val => {
+    total += parseFloat(val) || 0;
+  });
+  return total;
+}
+
 // ==========================================
 // 4. UI RE-RENDERING & COMPUTATIONS
 // ==========================================
@@ -467,22 +494,246 @@ function updateAllViews() {
   const totalExpense = filteredPengeluaran.reduce((sum, i) => sum + i.jumlah, 0);
   const totalSavings = filteredTabungan.reduce((sum, i) => sum + i.jumlah, 0);
 
-  const targetBudget = state.currentUser ? state.currentUser.monthlyBudget : 5000000;
-  const remainingBudget = targetBudget - totalExpense;
+  // Formula: Sisa Anggaran Bulanan = Pemasukan Bulanan - Pengeluaran Bulanan - Tabungan Bulanan
+  const remainingBudget = totalIncome - totalExpense - totalSavings;
+  const totalCategoryBudget = getTotalCategoryBudgetSum();
 
   // Render Home Card Values
-  document.getElementById('homeRemainingBudget').innerText = 'Rp ' + formatIDR(remainingBudget);
-  document.getElementById('homeTargetBudget').innerText = 'Rp ' + formatIDR(targetBudget);
+  const homeRemainingBudget = document.getElementById('homeRemainingBudget');
+  if (homeRemainingBudget) {
+    if (remainingBudget < 0) {
+      homeRemainingBudget.className = 'text-3xl font-black tracking-tight text-rose-200';
+      homeRemainingBudget.innerText = '-Rp ' + formatIDR(Math.abs(remainingBudget));
+    } else {
+      homeRemainingBudget.className = 'text-3xl font-black tracking-tight text-white';
+      homeRemainingBudget.innerText = 'Rp ' + formatIDR(remainingBudget);
+    }
+  }
+
+  const homeTargetBudget = document.getElementById('homeTargetBudget');
+  if (homeTargetBudget) {
+    homeTargetBudget.innerText = 'Rp ' + formatIDR(totalCategoryBudget);
+  }
+
   document.getElementById('homeTotalIncome').innerText = 'Rp ' + formatIDR(totalIncome);
   document.getElementById('homeTotalExpense').innerText = 'Rp ' + formatIDR(totalExpense);
   document.getElementById('homeTotalSavings').innerText = 'Rp ' + formatIDR(totalSavings);
 
-  // Render Chart & Ranking Widget
-  renderExpenseChart(filteredPengeluaran);
-  renderRankingWidget(filteredPengeluaran);
+  // Render Cashflow & Budgeting Sub Kategori Table
+  renderCashflowTable(filteredPengeluaran, filteredTabungan);
+
+  // Render Category Budget Inputs in Setting (Tab Akun)
+  renderCategoryBudgetInputs();
 
   // Render Aktivitas List
   renderAktivitasList(filteredPemasukan, filteredPengeluaran, filteredTabungan);
+}
+
+// ==========================================
+// 5. CASHFLOW TABLE & CATEGORY BUDGETING LOGIC
+// ==========================================
+
+function setCashflowFilter(filterType) {
+  state.cashflowFilter = filterType;
+  
+  const btnAll = document.getElementById('cashflowFilterAll');
+  const btnExp = document.getElementById('cashflowFilterPengeluaran');
+  const btnSav = document.getElementById('cashflowFilterTabungan');
+
+  if (btnAll) btnAll.className = filterType === 'all' ? 'px-2 py-1 text-[10px] font-bold rounded-lg text-emerald-700 bg-white shadow-xs' : 'px-2 py-1 text-[10px] font-bold rounded-lg text-slate-500 hover:text-slate-700';
+  if (btnExp) btnExp.className = filterType === 'pengeluaran' ? 'px-2 py-1 text-[10px] font-bold rounded-lg text-emerald-700 bg-white shadow-xs' : 'px-2 py-1 text-[10px] font-bold rounded-lg text-slate-500 hover:text-slate-700';
+  if (btnSav) btnSav.className = filterType === 'tabungan' ? 'px-2 py-1 text-[10px] font-bold rounded-lg text-emerald-700 bg-white shadow-xs' : 'px-2 py-1 text-[10px] font-bold rounded-lg text-slate-500 hover:text-slate-700';
+
+  updateAllViews();
+}
+
+function renderCashflowTable(pengeluaranList, tabunganList) {
+  const tbody = document.getElementById('cashflowTableBody');
+  const tfoot = document.getElementById('cashflowTableFooter');
+  if (!tbody) return;
+
+  // Build category list based on filter
+  let catList = [];
+  if (state.cashflowFilter === 'pengeluaran') {
+    catList = (state.categories.pengeluaran || []).map(cat => ({ name: cat, type: 'pengeluaran' }));
+  } else if (state.cashflowFilter === 'tabungan') {
+    catList = (state.categories.tabungan || []).map(cat => ({ name: cat, type: 'tabungan' }));
+  } else {
+    // 'all'
+    const expList = (state.categories.pengeluaran || []).map(cat => ({ name: cat, type: 'pengeluaran' }));
+    const savList = (state.categories.tabungan || []).map(cat => ({ name: cat, type: 'tabungan' }));
+    catList = [...expList, ...savList];
+  }
+
+  // Calculate actuals
+  const actualTotals = {};
+  pengeluaranList.forEach(i => {
+    const cat = i.kategori || 'Lainnya';
+    actualTotals[cat] = (actualTotals[cat] || 0) + i.jumlah;
+  });
+  tabunganList.forEach(i => {
+    const cat = i.kategori || 'Umum';
+    actualTotals[cat] = (actualTotals[cat] || 0) + i.jumlah;
+  });
+
+  let totalBudget = 0;
+  let totalAktual = 0;
+  let rowsHtml = '';
+
+  catList.forEach(item => {
+    const name = item.name;
+    const budget = parseFloat(state.categoryBudgets[name]) || 0;
+    const aktual = actualTotals[name] || 0;
+    const sisa = budget - aktual;
+
+    totalBudget += budget;
+    totalAktual += aktual;
+
+    let percentageStr = '0,00%';
+    let isOver = false;
+
+    if (budget > 0) {
+      const pct = (aktual / budget) * 100;
+      percentageStr = pct.toFixed(2).replace('.', ',') + '%';
+      if (pct > 100) isOver = true;
+    } else if (aktual > 0) {
+      percentageStr = '100,00%';
+      isOver = true;
+    }
+
+    // Format Sisa Budget
+    let sisaStr = '';
+    let sisaClass = 'text-emerald-700 font-bold';
+    let rowClass = 'hover:bg-slate-50/80 transition';
+
+    if (sisa < 0) {
+      sisaStr = `-Rp ${formatIDR(Math.abs(sisa))}`;
+      sisaClass = 'text-rose-600 font-bold bg-rose-50 px-1.5 py-0.5 rounded';
+      rowClass = 'bg-rose-50/30 hover:bg-rose-50/60 transition';
+    } else {
+      sisaStr = `Rp ${formatIDR(sisa)}`;
+    }
+
+    const pctBadgeClass = isOver 
+      ? 'bg-rose-100 text-rose-800 font-extrabold px-2 py-0.5 rounded-full text-[10px]' 
+      : 'bg-emerald-50 text-emerald-800 font-bold px-2 py-0.5 rounded-full text-[10px]';
+
+    const typeTag = item.type === 'tabungan' ? '<span class="text-[9px] text-blue-500 font-semibold ml-1">(Tabungan)</span>' : '';
+
+    rowsHtml += `
+      <tr class="${rowClass}">
+        <td class="py-2.5 px-3 font-semibold text-slate-800">
+          ${name} ${typeTag}
+        </td>
+        <td class="py-2.5 px-3 text-right text-slate-600">Rp ${formatIDR(budget)}</td>
+        <td class="py-2.5 px-3 text-right font-bold text-slate-900">Rp ${formatIDR(aktual)}</td>
+        <td class="py-2.5 px-3 text-right ${sisaClass}">${sisaStr}</td>
+        <td class="py-2.5 px-3 text-right">
+          <span class="${pctBadgeClass}">${percentageStr}</span>
+        </td>
+      </tr>
+    `;
+  });
+
+  if (catList.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">Belum ada kategori diset</td></tr>`;
+    if (tfoot) tfoot.innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = rowsHtml;
+
+  // Render Footer Row
+  const totalSisa = totalBudget - totalAktual;
+  let totalPctStr = '0,00%';
+  if (totalBudget > 0) {
+    totalPctStr = ((totalAktual / totalBudget) * 100).toFixed(2).replace('.', ',') + '%';
+  }
+
+  let totalSisaStr = totalSisa < 0 ? `-Rp ${formatIDR(Math.abs(totalSisa))}` : `Rp ${formatIDR(totalSisa)}`;
+  let totalSisaClass = totalSisa < 0 ? 'text-rose-600 font-bold' : 'text-emerald-700 font-bold';
+
+  if (tfoot) {
+    tfoot.innerHTML = `
+      <tr>
+        <td class="py-3 px-3 uppercase tracking-wider text-[11px] font-extrabold">TOTAL</td>
+        <td class="py-3 px-3 text-right text-slate-700">Rp ${formatIDR(totalBudget)}</td>
+        <td class="py-3 px-3 text-right text-slate-900 font-extrabold">Rp ${formatIDR(totalAktual)}</td>
+        <td class="py-3 px-3 text-right ${totalSisaClass}">${totalSisaStr}</td>
+        <td class="py-3 px-3 text-right">
+          <span class="bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full text-[10px] font-extrabold">${totalPctStr}</span>
+        </td>
+      </tr>
+    `;
+  }
+}
+
+// Category Budget Allocation Functions (Tab Akun / Setting)
+function setBudgetAllocationType(type) {
+  state.budgetAllocType = type;
+  
+  const btnExp = document.getElementById('budgetAllocTypePengeluaran');
+  const btnSav = document.getElementById('budgetAllocTypeTabungan');
+
+  if (btnExp) btnExp.className = type === 'pengeluaran' ? 'tab-btn active py-1.5 text-[11px] font-semibold rounded-lg' : 'tab-btn py-1.5 text-[11px] font-semibold rounded-lg';
+  if (btnSav) btnSav.className = type === 'tabungan' ? 'tab-btn active py-1.5 text-[11px] font-semibold rounded-lg' : 'tab-btn py-1.5 text-[11px] font-semibold rounded-lg';
+
+  renderCategoryBudgetInputs();
+}
+
+function renderCategoryBudgetInputs() {
+  const container = document.getElementById('categoryBudgetInputsList');
+  const badge = document.getElementById('totalBudgetAllocationBadge');
+  if (!container) return;
+
+  const currentType = state.budgetAllocType || 'pengeluaran';
+  const catList = state.categories[currentType] || [];
+
+  let html = '';
+  catList.forEach((cat, idx) => {
+    const val = state.categoryBudgets[cat] || 0;
+    const formattedVal = val > 0 ? formatIDR(val) : '';
+
+    html += `
+      <div class="flex items-center justify-between gap-2 bg-slate-50 p-2 rounded-xl border border-slate-200/80">
+        <span class="text-xs font-semibold text-slate-700 flex-1 truncate">${cat}</span>
+        <div class="relative w-36">
+          <span class="absolute left-2.5 top-1.5 text-slate-400 font-bold text-[11px]">Rp</span>
+          <input type="text" id="catBudget_${idx}" data-cat="${cat}" value="${formattedVal}" inputmode="numeric" pattern="[0-9]*" oninput="formatNumberInput(this)" placeholder="0" class="w-full pl-8 pr-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+
+  // Update total badge
+  const totalSum = getTotalCategoryBudgetSum();
+  if (badge) badge.innerText = `Total: Rp ${formatIDR(totalSum)}`;
+}
+
+function saveAllCategoryBudgets() {
+  const container = document.getElementById('categoryBudgetInputsList');
+  if (!container) return;
+
+  const inputs = container.querySelectorAll('input[data-cat]');
+  inputs.forEach(input => {
+    const catName = input.getAttribute('data-cat');
+    const val = unformatIDR(input.value);
+    state.categoryBudgets[catName] = val;
+  });
+
+  localStorage.setItem('app_category_budgets', JSON.stringify(state.categoryBudgets));
+  
+  // Update total target budget in user profile
+  const totalSum = getTotalCategoryBudgetSum();
+  if (state.currentUser) {
+    state.currentUser.monthlyBudget = totalSum;
+    localStorage.setItem('app_user', JSON.stringify(state.currentUser));
+  }
+
+  showToast('Alokasi dana per kategori berhasil disimpan!', 'success');
+  updateAllViews();
 }
 
 // Render Donut Chart with Chart.js
