@@ -452,7 +452,7 @@
         <!-- ========================================== -->
         <section id="tabAkun" class="space-y-4 hidden">
 
-          <!-- User Profile & Target Budget Editor -->
+          <!-- 1. Profile & Target Budget Card -->
           <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
             <div class="flex items-center gap-4 mb-4">
               <div
@@ -465,187 +465,181 @@
               </div>
             </div>
 
-            <!-- Budget Form -->
             <div class="pt-3 border-t border-slate-100">
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Target Anggaran Bulanan (IDR)</label>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Target Anggaran Bulanan (IDR)</label>
               <div class="flex gap-2">
                 <div class="relative flex-1">
-                  <span class="absolute left-3 top-2.5 text-slate-400 font-bold text-xs">Rp</span>
+                  <span class="absolute left-3 top-2.5 text-slate-400 font-extrabold text-xs">Rp</span>
                   <input type="text" id="budgetInput" inputmode="numeric" pattern="[0-9]*"
                     oninput="formatNumberInput(this)"
-                    class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800">
+                    class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <button onclick="saveMonthlyBudget()"
-                  class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl shadow hover:bg-emerald-700 transition">
+                  class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow transition">
                   Simpan
                 </button>
-                <!-- Alokasi Dana per Kategori Card (Budgeting Setting) -->
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
-                  <div class="flex items-center justify-between mb-1">
-                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                      <i class="fa-solid fa-bullseye text-emerald-600"></i> Alokasi Dana per Kategori
-                    </h3>
-                    <span class="text-[10px] font-extrabold px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full"
-                      id="totalBudgetAllocationBadge">Total: Rp 0</span>
-                  </div>
-                  <p class="text-xs text-slate-500 mb-3">Atur alokasi rencana anggaran (Budget) untuk tiap kategori.</p>
+              </div>
+            </div>
+          </div>
 
-                  <!-- Type Selector Tabs -->
-                  <div class="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl mb-3">
-                    <button onclick="setBudgetAllocationType('pengeluaran')" id="budgetAllocTypePengeluaran"
-                      class="tab-btn active py-1.5 text-[11px] font-semibold rounded-lg">📤 Pengeluaran</button>
-                    <button onclick="setBudgetAllocationType('tabungan')" id="budgetAllocTypeTabungan"
-                      class="tab-btn py-1.5 text-[11px] font-semibold rounded-lg">🏦 Tabungan</button>
-                  </div>
+          <!-- 2. Alokasi Dana per Kategori Card -->
+          <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+            <div class="flex items-center justify-between mb-1">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-bullseye text-emerald-600"></i> Alokasi Dana per Kategori
+              </h3>
+              <span class="text-[10px] font-extrabold px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded-full"
+                id="totalBudgetAllocationBadge">Total: Rp 0</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-3">Atur alokasi rencana anggaran (Budget) untuk tiap kategori.</p>
 
-                  <!-- Dynamic List of Category Budget Inputs -->
-                  <div id="categoryBudgetInputsList" class="space-y-2 max-h-72 overflow-y-auto pr-1">
-                    <!-- Dynamic JS content -->
-                  </div>
+            <div class="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl mb-3">
+              <button onclick="setBudgetAllocationType('pengeluaran')" id="budgetAllocTypePengeluaran"
+                class="tab-btn active py-1.5 text-[11px] font-semibold rounded-lg">📤 Pengeluaran</button>
+              <button onclick="setBudgetAllocationType('tabungan')" id="budgetAllocTypeTabungan"
+                class="tab-btn py-1.5 text-[11px] font-semibold rounded-lg">🏦 Tabungan</button>
+            </div>
 
-                  <button onclick="saveAllCategoryBudgets()"
-                    class="w-full mt-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan Alokasi Dana
-                  </button>
-                </div>
+            <div id="categoryBudgetInputsList" class="space-y-2 max-h-72 overflow-y-auto pr-1">
+              <!-- Dynamic JS content -->
+            </div>
 
-                <!-- Siklus Gajian & Cut-off Periode Card -->
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
-                  <h3 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-2">
-                    <i class="fa-solid fa-calendar-days text-emerald-600"></i> Siklus Gajian & Cut-off Periode
-                  </h3>
-                  <p class="text-xs text-slate-500 mb-3">Tentukan tanggal mulai gajian Anda untuk memfilter anggaran
-                    bulanan
-                    (contoh: 26 Sep - 25 Okt).</p>
-                  <div class="flex gap-2">
-                    <select id="paydayCutoffSelect"
-                      class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                      <option value="1">Tanggal 1 (Kalender Standar: 1 - 31)</option>
-                      <option value="25">Tanggal 25 (Siklus Gajian 25 - 24)</option>
-                      <option value="26">Tanggal 26 (Siklus Gajian 26 - 25)</option>
-                      <option value="27">Tanggal 27 (Siklus Gajian 27 - 26)</option>
-                      <option value="28">Tanggal 28 (Siklus Gajian 28 - 27)</option>
-                    </select>
-                    <button onclick="savePaydayCutoff()"
-                      class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl shadow hover:bg-emerald-700 transition">
-                      Simpan
-                    </button>
-                  </div>
-                </div>
+            <button onclick="saveAllCategoryBudgets()"
+              class="w-full mt-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2">
+              <i class="fa-solid fa-floppy-disk"></i> Simpan Alokasi Dana
+            </button>
+          </div>
 
+          <!-- 3. Siklus Gajian & Cut-off Periode Card -->
+          <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+            <h3 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days text-emerald-600"></i> Siklus Gajian & Cut-off Periode
+            </h3>
+            <p class="text-xs text-slate-500 mb-3">Tentukan tanggal mulai gajian Anda untuk memfilter anggaran bulanan (contoh: 26 Sep - 25 Okt).</p>
+            <div class="flex gap-2">
+              <select id="paydayCutoffSelect"
+                class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <option value="1">Tanggal 1 (Kalender Standar: 1 - 31)</option>
+                <option value="25">Tanggal 25 (Siklus Gajian 25 - 24)</option>
+                <option value="26">Tanggal 26 (Siklus Gajian 26 - 25)</option>
+                <option value="27">Tanggal 27 (Siklus Gajian 27 - 26)</option>
+                <option value="28">Tanggal 28 (Siklus Gajian 28 - 27)</option>
+              </select>
+              <button onclick="savePaydayCutoff()"
+                class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow transition">
+                Simpan
+              </button>
+            </div>
+          </div>
 
-                <!-- API Backend Connection Config Card -->
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
-                  <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                      <i class="fa-solid fa-link text-emerald-600"></i> Koneksi Google Apps Script
-                    </h3>
-                    <span id="apiStatusBadge"
-                      class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Terhubung</span>
-                  </div>
-                  <p class="text-xs text-slate-500 mb-3">Masukkan URL Web App hasil deploy Google Apps Script Anda:</p>
+          <!-- 4. Kelola Rekening & Dompet Saldo Card -->
+          <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+            <h3 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-2">
+              <i class="fa-solid fa-wallet text-emerald-600"></i> Kelola Rekening & Dompet Saldo
+            </h3>
+            <p class="text-xs text-slate-500 mb-3">Tambah atau hapus akun saldo/rekening (contoh: BCA, Tunai, GoPay).</p>
 
-                  <div class="space-y-3">
-                    <input type="url" id="apiUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
-                      class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-mono">
-                    <button onclick="saveApiUrl()"
-                      class="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-slate-800 transition">
-                      <i class="fa-solid fa-plug"></i> Simpan & Tes Koneksi API
-                    </button>
-                  </div>
-                </div>
+            <div class="flex gap-2 mb-3">
+              <input type="text" id="newWalletInput" placeholder="Nama Rekening / Dompet Baru..."
+                class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+              <button onclick="addNewWallet()"
+                class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition">
+                + Tambah
+              </button>
+            </div>
 
-                <!-- Master Category Management Card -->
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
-                  <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-tags text-emerald-600"></i> Kelola Master Kategori
-                  </h3>
+            <div id="walletChipsList" class="flex flex-wrap gap-2 pt-1">
+              <!-- Dynamic JS Wallet Chips -->
+            </div>
+          </div>
 
-                  <!-- Category Type Selector -->
-                  <div class="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-xl mb-3">
-                    <button onclick="setCategoryManagerType('pengeluaran')" id="catTypePengeluaran"
-                      class="tab-btn active py-1.5 text-[11px] rounded-lg">Pengeluaran</button>
-                    <button onclick="setCategoryManagerType('tabungan')" id="catTypeTabungan"
-                      class="tab-btn py-1.5 text-[11px] rounded-lg">Tabungan</button>
-                    <button onclick="setCategoryManagerType('pemasukan')" id="catTypePemasukan"
-                      class="tab-btn py-1.5 text-[11px] rounded-lg">Pemasukan</button>
-                  </div>
+          <!-- 5. Kelola Master Kategori Card -->
+          <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+            <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-tags text-emerald-600"></i> Kelola Master Kategori
+            </h3>
 
-                  <!-- Add Category Input -->
-                  <div class="flex gap-2 mb-3">
-                    <input type="text" id="newCategoryInput" placeholder="Nama Kategori Baru..."
-                      class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                    <button onclick="addNewCategory()"
-                      class="px-3.5 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-700 transition">
-                      + Tambah
-                    </button>
-                  </div>
+            <div class="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-xl mb-3">
+              <button onclick="setCategoryManagerType('pengeluaran')" id="catTypePengeluaran"
+                class="tab-btn active py-1.5 text-[11px] rounded-lg font-semibold">Pengeluaran</button>
+              <button onclick="setCategoryManagerType('tabungan')" id="catTypeTabungan"
+                class="tab-btn py-1.5 text-[11px] rounded-lg font-semibold">Tabungan</button>
+              <button onclick="setCategoryManagerType('pemasukan')" id="catTypePemasukan"
+                class="tab-btn py-1.5 text-[11px] rounded-lg font-semibold">Pemasukan</button>
+            </div>
 
-                  <!-- Category List Chips -->
-                  <div id="categoryChipsList" class="flex flex-wrap gap-2 pt-2">
-                    <!-- Dynamic JS chips -->
-                  </div>
-                </div>
+            <div class="flex gap-2 mb-3">
+              <input type="text" id="newCategoryInput" placeholder="Nama Kategori Baru..."
+                class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+              <button onclick="addNewCategory()"
+                class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition">
+                + Tambah
+              </button>
+            </div>
 
-                <!-- Wallet / Dompet Manager Card -->
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
-                  <h3 class="text-sm font-bold text-slate-800 mb-1 flex items-center gap-2">
-                    <i class="fa-solid fa-wallet text-emerald-600"></i> Kelola Rekening & Dompet Saldo
-                  </h3>
-                  <p class="text-xs text-slate-500 mb-3">Tambah atau hapus akun saldo/rekening (contoh: BCA, Tunai,
-                    GoPay).</p>
+            <div id="categoryChipsList" class="flex flex-wrap gap-2 pt-2">
+              <!-- Dynamic JS chips -->
+            </div>
+          </div>
 
-                  <div class="flex gap-2 mb-3">
-                    <input type="text" id="newWalletInput" placeholder="Nama Rekening / Dompet Baru..."
-                      class="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-                    <button onclick="addNewWallet()"
-                      class="px-3.5 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-700 transition">
-                      + Tambah
-                    </button>
-                  </div>
+          <!-- 6. API Backend Connection Config Card -->
+          <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-link text-emerald-600"></i> Koneksi Google Apps Script
+              </h3>
+              <span id="apiStatusBadge"
+                class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Terhubung</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-3">Masukkan URL Web App hasil deploy Google Apps Script Anda:</p>
 
-                  <div id="walletChipsList" class="flex flex-wrap gap-2 pt-1">
-                    <!-- Dynamic JS Wallet Chips -->
-                  </div>
-                </div>
+            <div class="space-y-3">
+              <input type="url" id="apiUrlInput" placeholder="https://script.google.com/macros/s/.../exec"
+                class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-mono">
+              <button onclick="saveApiUrl()"
+                class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition">
+                <i class="fa-solid fa-plug"></i> Simpan & Tes Koneksi API
+              </button>
+            </div>
+          </div>
 
-                <!-- PWA Install App Card -->
-                <div
-                  class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-5 shadow-lg text-white border border-slate-700">
-                  <div class="flex items-center gap-3 mb-3">
-                    <div
-                      class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/30">
-                      <i class="fa-solid fa-mobile-screen-button"></i>
-                    </div>
-                    <div>
-                      <h3 class="text-sm font-bold text-white">Install FinTrack ke HP</h3>
-                      <p class="text-[11px] text-slate-300">Gunakan layaknya aplikasi native Android / iOS</p>
-                    </div>
-                  </div>
-                  <button id="pwaInstallBtn" onclick="installPWAApp()"
-                    class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
-                    <i class="fa-solid fa-download"></i> Install Aplikasi Sekarang
-                  </button>
-                </div>
+          <!-- 7. PWA Install App Card -->
+          <div
+            class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-5 shadow-lg text-white border border-slate-700">
+            <div class="flex items-center gap-3 mb-3">
+              <div
+                class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl border border-emerald-500/30">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-white">Install FinTrack ke HP</h3>
+                <p class="text-[11px] text-slate-300">Gunakan layaknya aplikasi native Android / iOS</p>
+              </div>
+            </div>
+            <button id="pwaInstallBtn" onclick="installPWAApp()"
+              class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition">
+              <i class="fa-solid fa-download"></i> Install Aplikasi Sekarang
+            </button>
+          </div>
 
-                <!-- Auth & Password Settings Card -->
-                <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
-                  <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-shield-halved text-emerald-600"></i> Keamanan & Akun
-                  </h3>
-                  <div class="space-y-2">
-                    <button onclick="showChangePinModal()"
-                      class="w-full py-2.5 px-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-xs font-semibold text-slate-700 text-left flex items-center justify-between border border-slate-200">
-                      <span>Ubah PIN / Password</span>
-                      <i class="fa-solid fa-chevron-right text-slate-400"></i>
-                    </button>
-                    <button onclick="handleLogout()"
-                      class="w-full py-2.5 px-3 bg-rose-50 hover:bg-rose-100 rounded-xl text-xs font-bold text-rose-600 text-left flex items-center justify-between border border-rose-200">
-                      <span>Keluar (Logout)</span>
-                      <i class="fa-solid fa-right-from-bracket text-rose-500"></i>
-                    </button>
-                  </div>
-                </div>
+          <!-- 8. Auth & Password Settings Card -->
+          <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+            <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved text-emerald-600"></i> Keamanan & Akun
+            </h3>
+            <div class="space-y-2">
+              <button onclick="showChangePinModal()"
+                class="w-full py-2.5 px-3 bg-slate-50 hover:bg-slate-100 rounded-xl text-xs font-semibold text-slate-700 text-left flex items-center justify-between border border-slate-200">
+                <span>Ubah PIN / Password</span>
+                <i class="fa-solid fa-chevron-right text-slate-400"></i>
+              </button>
+              <button onclick="handleLogout()"
+                class="w-full py-2.5 px-3 bg-rose-50 hover:bg-rose-100 rounded-xl text-xs font-bold text-rose-600 text-left flex items-center justify-between border border-rose-200">
+                <span>Keluar (Logout)</span>
+                <i class="fa-solid fa-right-from-bracket text-rose-500"></i>
+              </button>
+            </div>
+          </div>
 
         </section>
 
@@ -665,10 +659,7 @@
 
         <button onclick="switchTab('input')" id="navInput"
           class="nav-item flex flex-col items-center gap-1 text-slate-400 py-1">
-          <div
-            class="w-10 h-10 -mt-5 bg-emerald-600 text-white rounded-full flex items-center justify-center text-lg shadow-lg shadow-emerald-600/40 border-4 border-slate-50 active:scale-90 transition">
-            <i class="fa-solid fa-plus"></i>
-          </div>
+          <i class="fa-solid fa-circle-plus text-lg"></i>
           <span class="text-[10px] font-semibold">Input</span>
         </button>
 
