@@ -9,6 +9,11 @@ desktop.ini
 *.swp
 *.swo
 
+# Tools & Downloads
+scrcpy-win64-*/
+*.png
+*.webp
+
 # Environment & Config
 .env
 .env.local

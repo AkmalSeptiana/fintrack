@@ -1,29 +1,32 @@
-/* Custom styling for Personal Finance Tracker Mobile SPA */
+/* Custom styling for FinTrack v2.0 Mobile SPA - Saldoin Feature Parity + Premium Dark Emerald Aesthetic */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --primary-emerald: #059669;
-  --primary-emerald-dark: #047857;
-  --bg-app: #F8FAFC;
+  --primary-emerald: #10B981;
+  --primary-emerald-dark: #059669;
+  --primary-mint: #34D399;
+  --bg-app: #0F172A;
+  --card-bg: #1E293B;
+  --card-border: rgba(255, 255, 255, 0.08);
 }
 
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #0F172A; /* Dark container background for desktop view */
-  color: #1E293B;
+  background-color: #020617; /* Very dark background for container framing */
+  color: #F8FAFC;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 
-/* Mobile Frame Wrapper for Desktop preview while keeping 100% mobile experience */
+/* Mobile Frame Wrapper */
 .app-container {
   max-width: 480px;
   width: 100%;
   margin: 0 auto;
   min-height: 100vh;
-  background-color: var(--bg-app);
+  background-color: #0F172A;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
@@ -31,33 +34,45 @@ body {
 
 /* Glassmorphism effects */
 .glass-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(30, 41, 59, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-nav {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(226, 232, 240, 0.8);
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Emerald Card Gradient */
+/* Emerald Card Gradients */
 .bg-emerald-gradient {
   background: linear-gradient(135deg, #059669 0%, #047857 50%, #064E3B 100%);
 }
 
-.bg-accent-gradient {
-  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+.bg-emerald-glass {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.05) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
-.bg-purple-gradient {
-  background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+.bg-rose-glass {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(225, 29, 72, 0.05) 100%);
+  border: 1px solid rgba(244, 63, 94, 0.3);
 }
 
-/* Custom Hide Scrollbar */
+.bg-blue-glass {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(29, 78, 216, 0.05) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.bg-purple-glass {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(126, 34, 206, 0.05) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* Hide Scrollbar */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -66,64 +81,87 @@ body {
   scrollbar-width: none;
 }
 
-/* Bottom Nav Active State Styling */
+/* Bottom Nav Active State */
 .nav-item {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #64748B;
 }
 .nav-item.active {
-  color: #059669;
+  color: #10B981;
 }
 .nav-item.active i {
-  transform: translateY(-2px) scale(1.1);
+  transform: translateY(-2px) scale(1.15);
 }
 
-/* Custom Progress Bar Animation */
+/* Floating Action Button Pulse */
+.fab-btn {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.5);
+  transition: all 0.2s ease-in-out;
+}
+.fab-btn:active {
+  transform: scale(0.92);
+}
+
+/* Progress Bar Fill */
 .progress-bar-fill {
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Tab selector buttons */
+/* Tab Selector Buttons */
 .tab-btn {
   transition: all 0.2s ease-in-out;
 }
 .tab-btn.active {
-  background-color: #059669;
+  background-color: #10B981;
   color: #FFFFFF;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
 }
 
-/* Shimmer Loading Animation */
+/* Shimmer Skeleton Loading */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
 .skeleton-loading {
-  background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+  background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
 
-/* Modal Animation */
+/* Voice Recording Pulse Animation */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+  70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.recording-pulse {
+  animation: pulseGlow 1.5s infinite;
+  background-color: #EF4444 !important;
+}
+
+/* Modal Slide Animations */
 .modal-enter {
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px) scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
-/* Floating Input Focus Effects */
+/* Custom Input Focus Effects */
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: #059669;
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+  border-color: #10B981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
 }
