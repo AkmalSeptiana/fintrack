@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>FinTrack v2.0 - Pelacak Keuangan Pribadi & Auto-Split Tabungan</title>
+  <title>FinTrack v2.0 - Pelacak Keuangan & Tabungan Otomatis</title>
 
   <!-- PWA & Mobile Native Meta Tags -->
   <link rel="manifest" href="manifest.json">
@@ -45,7 +45,7 @@
             <i class="fa-solid fa-chart-line"></i>
           </div>
           <h1 class="text-2xl font-black text-white tracking-tight" id="authTitle">FinTrack v2.0</h1>
-          <p class="text-xs font-medium text-emerald-400 mt-1" id="authSubtitle">Catat Keuangan & Tabungan Otomatis</p>
+          <p class="text-xs font-medium text-emerald-400 mt-1" id="authSubtitle">Kelola Keuangan & Tabungan Otomatis</p>
         </div>
 
         <!-- Auth Form -->
@@ -56,7 +56,7 @@
             <label class="block text-xs font-semibold text-slate-400 mb-1">Username / Nama</label>
             <div class="relative">
               <span class="absolute left-3 top-2.5 text-slate-500 text-sm"><i class="fa-solid fa-user"></i></span>
-              <input type="text" id="authUsername" required
+              <input type="text" id="authUsername" required value="Akmal"
                 class="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium text-white placeholder-slate-600"
                 placeholder="Masukkan username">
             </div>
@@ -67,7 +67,7 @@
             <label class="block text-xs font-semibold text-slate-400 mb-1">PIN / Password (6 Digit)</label>
             <div class="relative">
               <span class="absolute left-3 top-2.5 text-slate-500 text-sm"><i class="fa-solid fa-lock"></i></span>
-              <input type="password" id="authPin" inputmode="numeric" pattern="[0-9]*" maxlength="12" required
+              <input type="password" id="authPin" inputmode="numeric" pattern="[0-9]*" maxlength="12" required value="123456"
                 class="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm font-medium text-white placeholder-slate-600"
                 placeholder="******">
             </div>
@@ -75,18 +75,11 @@
 
           <!-- Submit Button -->
           <button type="submit" id="authSubmitBtn"
-            class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-sm shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition">
-            <span id="authBtnText">Masuk Sekarang</span>
+            class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black rounded-xl text-sm shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 transition">
+            <span id="authBtnText">Masuk Aplikasi</span>
             <i id="authBtnSpinner" class="fa-solid fa-circle-notch fa-spin hidden"></i>
           </button>
         </form>
-
-        <!-- Toggle Login/Register -->
-        <div class="mt-6 text-center text-xs text-slate-500">
-          <span id="authToggleQuestion">Belum punya akun?</span>
-          <button type="button" onclick="toggleAuthMode()" id="authToggleBtn"
-            class="font-bold text-emerald-400 hover:underline ml-1">Daftar Akun Baru</button>
-        </div>
 
       </div>
     </div>
@@ -99,7 +92,7 @@
       <!-- Top Header Bar -->
       <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center text-lg font-bold shadow-md shadow-emerald-500/20">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center text-lg font-black shadow-md shadow-emerald-500/20">
             <i class="fa-solid fa-wallet"></i>
           </div>
           <div>
@@ -107,21 +100,21 @@
               <span class="text-xs font-semibold text-slate-400" id="userGreeting">Selamat Malam,</span>
               <span class="text-xs font-bold text-emerald-400" id="currentUserName">Akmal</span>
             </div>
-            <h2 class="text-sm font-black text-white tracking-tight" id="headerTitle">FinTrack v2.0</h2>
+            <h2 class="text-sm font-black text-white tracking-tight" id="headerTitle">FinTrack Pro</h2>
           </div>
         </div>
 
         <div class="flex items-center gap-2">
           <!-- Cloud Sync Indicator -->
           <button onclick="syncDataWithApi()" id="syncBtn" title="Sinkronisasi Data"
-            class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs font-semibold text-slate-300 flex items-center gap-1.5 transition">
+            class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-slate-300 flex items-center gap-1.5 transition">
             <i id="syncIcon" class="fa-solid fa-rotate text-emerald-400"></i>
             <span id="syncStatusText" class="hidden sm:inline">Online</span>
           </button>
 
           <!-- Logout -->
           <button onclick="handleLogout()" title="Keluar"
-            class="w-8 h-8 bg-slate-800 hover:bg-rose-950/60 text-slate-400 hover:text-rose-400 rounded-lg flex items-center justify-center text-xs transition border border-slate-700">
+            class="w-8 h-8 bg-slate-800 hover:bg-rose-950/60 text-slate-400 hover:text-rose-400 rounded-xl flex items-center justify-center text-xs transition border border-slate-700">
             <i class="fa-solid fa-right-from-bracket"></i>
           </button>
         </div>
@@ -138,13 +131,13 @@
           
           <div class="flex items-center justify-between text-emerald-100/90 text-xs font-semibold mb-1">
             <span>Total Saldo Gabungan</span>
-            <span class="bg-white/15 px-2.5 py-0.5 rounded-full text-[10px] font-bold" id="totalAccountsBadge">5 Akun Terhubung</span>
+            <span class="bg-white/15 px-2.5 py-0.5 rounded-full text-[10px] font-bold" id="totalAccountsBadge">5 Dompet Aktif</span>
           </div>
 
           <div class="text-3xl font-black tracking-tight mb-4 flex items-center gap-2">
             <span id="totalBalanceDisplay">Rp 0</span>
             <button onclick="toggleBalanceVisibility()" class="text-emerald-200 hover:text-white text-base">
-              <i id="balanceEyeIcon" class="fa-solid fa-eye"></i>
+              <i id="balanceEyeIcon" class="fa-solid fa-eye text-emerald-200"></i>
             </button>
           </div>
 
@@ -171,42 +164,42 @@
         <!-- Quick Action Buttons (Saldoin 4 Tombol Cepat) -->
         <div class="grid grid-cols-4 gap-2.5">
           <button onclick="openTransactionModal('pemasukan')"
-            class="flex flex-col items-center justify-center p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-2xl text-center group transition">
-            <div class="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 flex items-center justify-center text-lg mb-1.5 transition">
+            class="flex flex-col items-center justify-center p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-2xl text-center group transition active:scale-95">
+            <div class="w-11 h-11 rounded-2xl bg-emerald-500/15 text-emerald-400 group-hover:scale-110 flex items-center justify-center text-lg mb-1.5 transition">
               <i class="fa-solid fa-plus"></i>
             </div>
-            <span class="text-[11px] font-bold text-slate-300">Catat</span>
+            <span class="text-[11px] font-extrabold text-slate-200">Catat</span>
           </button>
 
           <button onclick="openTransferModal()"
-            class="flex flex-col items-center justify-center p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-2xl text-center group transition">
-            <div class="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-400 group-hover:scale-110 flex items-center justify-center text-lg mb-1.5 transition">
+            class="flex flex-col items-center justify-center p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-2xl text-center group transition active:scale-95">
+            <div class="w-11 h-11 rounded-2xl bg-blue-500/15 text-blue-400 group-hover:scale-110 flex items-center justify-center text-lg mb-1.5 transition">
               <i class="fa-solid fa-arrow-right-arrow-left"></i>
             </div>
-            <span class="text-[11px] font-bold text-slate-300">Transfer</span>
+            <span class="text-[11px] font-extrabold text-slate-200">Transfer</span>
           </button>
 
           <button onclick="switchTab('analytics'); setAnalyticsSubTab('rules')"
-            class="flex flex-col items-center justify-center p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-2xl text-center group transition">
-            <div class="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 group-hover:scale-110 flex items-center justify-center text-lg mb-1.5 transition">
+            class="flex flex-col items-center justify-center p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-2xl text-center group transition active:scale-95">
+            <div class="w-11 h-11 rounded-2xl bg-purple-500/15 text-purple-400 group-hover:scale-110 flex items-center justify-center text-lg mb-1.5 transition">
               <i class="fa-solid fa-sliders"></i>
             </div>
-            <span class="text-[11px] font-bold text-slate-300">Auto-Split</span>
+            <span class="text-[11px] font-extrabold text-slate-200">Auto-Split</span>
           </button>
 
           <button onclick="openVoiceModal()"
-            class="flex flex-col items-center justify-center p-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-2xl text-center group transition">
-            <div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 group-hover:scale-110 flex items-center justify-center text-lg mb-1.5 transition">
+            class="flex flex-col items-center justify-center p-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-2xl text-center group transition active:scale-95">
+            <div class="w-11 h-11 rounded-2xl bg-amber-500/15 text-amber-400 group-hover:scale-110 flex items-center justify-center text-lg mb-1.5 transition">
               <i class="fa-solid fa-microphone"></i>
             </div>
-            <span class="text-[11px] font-bold text-slate-300">Suara</span>
+            <span class="text-[11px] font-extrabold text-slate-200">Suara</span>
           </button>
         </div>
 
         <!-- Carousel / Grid Akun & Dompet (Multi-Account List) -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Dompet Saya</h3>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Daftar Akun / Dompet</h3>
             <button onclick="switchTab('transactions'); setTxSubTab('accounts')" class="text-xs font-bold text-emerald-400 hover:underline">Kelola Dompet</button>
           </div>
 
@@ -218,7 +211,7 @@
         <!-- Target Tabungan Highlights (Saldoin Savings Goals) -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Target Tabungan</h3>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Target Tabungan (Goals)</h3>
             <button onclick="switchTab('analytics'); setAnalyticsSubTab('goals')" class="text-xs font-bold text-emerald-400 hover:underline">Lihat Semua</button>
           </div>
 
@@ -275,17 +268,17 @@
 
           <!-- Type Filter Badges -->
           <div class="flex gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="txTypeFilterContainer">
-            <button onclick="setTxTypeFilter('all')" class="tab-btn active px-3 py-1.5 rounded-xl text-xs font-bold">Semua</button>
-            <button onclick="setTxTypeFilter('pemasukan')" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Pemasukan</button>
-            <button onclick="setTxTypeFilter('pengeluaran')" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Pengeluaran</button>
-            <button onclick="setTxTypeFilter('tabungan')" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Tabungan</button>
-            <button onclick="setTxTypeFilter('transfer')" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Transfer</button>
+            <button onclick="setTxTypeFilter('all', this)" class="tab-btn active px-3 py-1.5 rounded-xl text-xs font-bold">Semua</button>
+            <button onclick="setTxTypeFilter('pemasukan', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Pemasukan</button>
+            <button onclick="setTxTypeFilter('pengeluaran', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Pengeluaran</button>
+            <button onclick="setTxTypeFilter('tabungan', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Tabungan</button>
+            <button onclick="setTxTypeFilter('transfer', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Transfer</button>
           </div>
 
           <!-- Monthly Summary Banner -->
-          <div class="flex items-center justify-between p-3 bg-slate-900/80 border border-slate-800 rounded-xl text-xs">
+          <div class="flex items-center justify-between p-3.5 bg-slate-900/80 border border-slate-800 rounded-2xl text-xs">
             <span class="font-semibold text-slate-400">Total Pengeluaran Bulan Ini</span>
-            <span class="font-black text-rose-400" id="txMonthlyExpenseTotal">Rp 0</span>
+            <span class="font-black text-rose-400 text-sm" id="txMonthlyExpenseTotal">Rp 0</span>
           </div>
 
           <!-- Transaction List -->
@@ -356,7 +349,7 @@
             <div>
               <span class="text-xs font-semibold text-slate-400">Financial Health Score</span>
               <div class="text-xl font-black text-emerald-400" id="healthScoreText">85 / 100 (Sangat Sehat)</div>
-              <p class="text-[11px] text-slate-400 mt-0.5">Alokasi tabungan & anggaran berada pada tingkat aman.</p>
+              <p class="text-[11px] text-slate-400 mt-0.5">Alokasi tabungan & pengeluaran berada di tingkat aman.</p>
             </div>
             <div class="w-14 h-14 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-2xl font-black">
               <i class="fa-solid fa-shield-heart"></i>
@@ -380,7 +373,7 @@
           </div>
         </div>
 
-        <!-- SECTION C: AUTO-SPLIT RULES ENGINE (SALDOIN KILLER FEATURE) -->
+        <!-- SECTION C: AUTO-SPLIT RULES ENGINE -->
         <div id="sectionAnRules" class="space-y-3 hidden">
           <div class="flex items-center justify-between">
             <div>
@@ -393,7 +386,7 @@
           </div>
 
           <!-- Information Banner -->
-          <div class="p-3 bg-purple-950/40 border border-purple-800/50 rounded-2xl text-xs text-purple-200 flex gap-2.5">
+          <div class="p-3.5 bg-purple-950/40 border border-purple-800/50 rounded-2xl text-xs text-purple-200 flex gap-2.5">
             <i class="fa-solid fa-circle-info text-purple-400 text-base mt-0.5"></i>
             <span>Setiap kali Anda mencatat <b>Pemasukan</b> $\ge$ batas minimal, sistem akan secara otomatis memotong & mengalokasikan tabungan ke Target impian Anda!</span>
           </div>
@@ -444,25 +437,6 @@
           </div>
         </div>
 
-        <!-- Master Data & App Preferences -->
-        <div class="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
-          <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-            <i class="fa-solid fa-sliders text-emerald-400"></i> Pengaturan Aplikasi
-          </h3>
-
-          <div class="flex items-center justify-between pt-1">
-            <div>
-              <span class="text-xs font-bold text-white block">Tanggal Cutoff Gaji</span>
-              <span class="text-[11px] text-slate-400">Tanggal awal siklus bulanan</span>
-            </div>
-            <select id="paydayCutoffSelect" onchange="updatePaydayCutoff(this.value)" class="bg-slate-950 border border-slate-800 text-xs font-bold text-emerald-400 rounded-xl px-2.5 py-1.5">
-              <option value="1">Tanggal 1</option>
-              <option value="25">Tanggal 25</option>
-              <option value="26" selected>Tanggal 26</option>
-            </select>
-          </div>
-        </div>
-
         <!-- Master Categories Management -->
         <div class="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
           <div class="flex items-center justify-between">
@@ -498,8 +472,8 @@
 
       <!-- Central FAB Button -->
       <div class="flex-1 flex justify-center -mt-6">
-        <button onclick="openTransactionModal()"
-          class="fab-btn w-13 h-13 w-12 h-12 rounded-full text-slate-950 flex items-center justify-center text-xl font-black shadow-lg shadow-emerald-500/40 transform active:scale-95 transition">
+        <button onclick="openTransactionModal('pemasukan')"
+          class="fab-btn w-12 h-12 rounded-full text-slate-950 flex items-center justify-center text-xl font-black shadow-lg shadow-emerald-500/40 transform active:scale-95 transition">
           <i class="fa-solid fa-plus"></i>
         </button>
       </div>
@@ -521,8 +495,8 @@
     <!-- ========================================== -->
     <!-- MODAL 1: CATAT TRANSAKSI                   -->
     <!-- ========================================== -->
-    <div id="modalTransaction" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
-      <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 modal-enter max-h-[90vh] overflow-y-auto">
+    <div id="modalTransaction" class="modal-wrapper fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+      <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 modal-enter max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
         
         <div class="flex items-center justify-between pb-2 border-b border-slate-800">
           <h3 class="text-base font-black text-white flex items-center gap-2">
@@ -537,9 +511,9 @@
           
           <!-- Tipe Transaksi (Pemasukan / Pengeluaran / Tabungan) -->
           <div class="grid grid-cols-3 gap-2 p-1 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold">
-            <button type="button" onclick="setTxTypeForm('pemasukan')" id="btnFormIn" class="py-2 rounded-lg bg-emerald-500 text-slate-950 shadow">Pemasukan</button>
-            <button type="button" onclick="setTxTypeForm('pengeluaran')" id="btnFormOut" class="py-2 rounded-lg text-slate-400 hover:text-white">Pengeluaran</button>
-            <button type="button" onclick="setTxTypeForm('tabungan')" id="btnFormSav" class="py-2 rounded-lg text-slate-400 hover:text-white">Tabungan</button>
+            <button type="button" onclick="setTxTypeForm('pemasukan')" id="btnFormIn" class="py-2 rounded-xl bg-emerald-500 text-slate-950 shadow-md font-black">Pemasukan</button>
+            <button type="button" onclick="setTxTypeForm('pengeluaran')" id="btnFormOut" class="py-2 rounded-xl text-slate-400 hover:text-white font-bold">Pengeluaran</button>
+            <button type="button" onclick="setTxTypeForm('tabungan')" id="btnFormSav" class="py-2 rounded-xl text-slate-400 hover:text-white font-bold">Tabungan</button>
           </div>
 
           <!-- Nominal & Voice Button -->
@@ -561,7 +535,7 @@
             <div class="font-bold flex items-center gap-1.5 text-purple-300">
               <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Split Tabungan Terdeteksi!
             </div>
-            <div id="autoSplitPreviewText" class="text-[11px] text-slate-300">Alokasi otomatis ke Target Tabungan akan dieksekusi setelah disimpan.</div>
+            <div id="autoSplitPreviewText" class="text-[11px] text-slate-300 whitespace-pre-line">Alokasi otomatis ke Target Tabungan akan dieksekusi setelah disimpan.</div>
           </div>
 
           <!-- Nama / Deskripsi Transaksi -->
@@ -614,8 +588,8 @@
     <!-- ========================================== -->
     <!-- MODAL 2: TRANSFER ANTAR DOMPET             -->
     <!-- ========================================== -->
-    <div id="modalTransfer" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
-      <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 modal-enter">
+    <div id="modalTransfer" class="modal-wrapper fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+      <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 modal-enter" onclick="event.stopPropagation()">
         
         <div class="flex items-center justify-between pb-2 border-b border-slate-800">
           <h3 class="text-base font-black text-white flex items-center gap-2">
@@ -627,7 +601,6 @@
         </div>
 
         <form onsubmit="handleTransferSubmit(event)" class="space-y-3">
-          <!-- Dompet Asal -->
           <div>
             <label class="block text-xs font-semibold text-slate-400 mb-1">Dompet Asal (Dari)</label>
             <select id="trfSourceSelect" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-white">
@@ -635,7 +608,6 @@
             </select>
           </div>
 
-          <!-- Dompet Tujuan -->
           <div>
             <label class="block text-xs font-semibold text-slate-400 mb-1">Dompet Tujuan (Ke)</label>
             <select id="trfDestSelect" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-white">
@@ -643,21 +615,18 @@
             </select>
           </div>
 
-          <!-- Nominal Transfer -->
           <div>
             <label class="block text-xs font-semibold text-slate-400 mb-1">Nominal Transfer (Rp)</label>
             <input type="number" id="trfAmountInput" required min="1"
               class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-bold text-white placeholder-slate-600" placeholder="0">
           </div>
 
-          <!-- Biaya Admin -->
           <div>
             <label class="block text-xs font-semibold text-slate-400 mb-1">Biaya Admin (Opsional, misal: Rp 2.500)</label>
             <input type="number" id="trfFeeInput" min="0" value="0"
               class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-white placeholder-slate-600">
           </div>
 
-          <!-- Catatan -->
           <div>
             <label class="block text-xs font-semibold text-slate-400 mb-1">Catatan</label>
             <input type="text" id="trfNoteInput" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-600" placeholder="Contoh: Topup GoPay">
@@ -675,8 +644,8 @@
     <!-- ========================================== -->
     <!-- MODAL 3: TARGET TABUNGAN (GOAL EDITOR)     -->
     <!-- ========================================== -->
-    <div id="modalGoal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
-      <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 modal-enter">
+    <div id="modalGoal" class="modal-wrapper fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+      <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 modal-enter" onclick="event.stopPropagation()">
         
         <div class="flex items-center justify-between pb-2 border-b border-slate-800">
           <h3 class="text-base font-black text-white flex items-center gap-2">
@@ -733,8 +702,8 @@
     <!-- ========================================== -->
     <!-- MODAL 4: AUTO-SPLIT RULE EDITOR            -->
     <!-- ========================================== -->
-    <div id="modalRule" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
-      <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 modal-enter max-h-[90vh] overflow-y-auto">
+    <div id="modalRule" class="modal-wrapper fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+      <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 modal-enter max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
         
         <div class="flex items-center justify-between pb-2 border-b border-slate-800">
           <h3 class="text-base font-black text-white flex items-center gap-2">
@@ -783,8 +752,8 @@
     <!-- ========================================== -->
     <!-- MODAL 5: KELOLA AKUN DOMPET (ACCOUNT)     -->
     <!-- ========================================== -->
-    <div id="modalAccount" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
-      <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 modal-enter">
+    <div id="modalAccount" class="modal-wrapper fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+      <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 modal-enter" onclick="event.stopPropagation()">
         
         <div class="flex items-center justify-between pb-2 border-b border-slate-800">
           <h3 class="text-base font-black text-white flex items-center gap-2">
@@ -836,8 +805,8 @@
     <!-- ========================================== -->
     <!-- MODAL 6: VOICE INPUT ASSISTANT            -->
     <!-- ========================================== -->
-    <div id="modalVoice" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-      <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center space-y-4 modal-enter">
+    <div id="modalVoice" class="modal-wrapper fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+      <div class="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center space-y-4 modal-enter" onclick="event.stopPropagation()">
         <div class="w-20 h-20 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-3xl mx-auto recording-pulse" id="voicePulseIcon">
           <i class="fa-solid fa-microphone"></i>
         </div>
@@ -847,7 +816,7 @@
           <p class="text-xs text-slate-400 mt-1" id="voiceStatusSubtitle">Ucapkan contoh: "Beli bensin 50rb dari Gopay"</p>
         </div>
 
-        <div class="p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs italic text-slate-300 min-h-[48px] flex items-center justify-center" id="voiceResultText">
+        <div class="p-3.5 bg-slate-950 border border-slate-800 rounded-xl text-xs italic text-slate-300 min-h-[52px] flex items-center justify-center" id="voiceResultText">
           Silakan bicara sekarang...
         </div>
 
