@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>FinTrack v2.0 - Pelacak Keuangan & Tabungan Otomatis</title>
+  <title>Saldoin FinTrack Pro - Catat Keuangan & Tabungan Otomatis</title>
 
   <!-- PWA & Mobile Native Meta Tags -->
   <link rel="manifest" href="manifest.json">
@@ -12,7 +12,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="FinTrack">
+  <meta name="apple-mobile-web-app-title" content="Saldoin">
   <link rel="apple-touch-icon" href="icon.svg">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
 
@@ -41,11 +41,11 @@
         <!-- Logo / Header -->
         <div class="text-center mb-6">
           <div
-            class="w-16 h-16 bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl font-bold shadow-lg shadow-emerald-500/20">
-            <i class="fa-solid fa-chart-line"></i>
+            class="w-16 h-16 bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl font-black shadow-lg shadow-emerald-500/20">
+            <i class="fa-solid fa-wallet"></i>
           </div>
-          <h1 class="text-2xl font-black text-white tracking-tight" id="authTitle">FinTrack v2.0</h1>
-          <p class="text-xs font-medium text-emerald-400 mt-1" id="authSubtitle">Kelola Keuangan & Tabungan Otomatis</p>
+          <h1 class="text-2xl font-black text-white tracking-tight" id="authTitle">FinTrack Pro</h1>
+          <p class="text-xs font-medium text-emerald-400 mt-1" id="authSubtitle">Catat Keuangan & Tabungan Otomatis</p>
         </div>
 
         <!-- Auth Form -->
@@ -89,7 +89,7 @@
     <!-- ========================================== -->
     <div id="mainApp" class="flex-1 flex flex-col pb-24">
 
-      <!-- Top Header Bar -->
+      <!-- Top Header Bar (Saldoin Style) -->
       <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center text-lg font-black shadow-md shadow-emerald-500/20">
@@ -121,7 +121,7 @@
       </header>
 
       <!-- ========================================== -->
-      <!-- TAB 1: DASHBOARD UTAMA                     -->
+      <!-- TAB 1: DASHBOARD (BERANDA UTAMA)           -->
       <!-- ========================================== -->
       <main id="tabDashboard" class="tab-content flex-1 p-4 space-y-4">
         
@@ -196,11 +196,11 @@
           </button>
         </div>
 
-        <!-- Carousel / Grid Akun & Dompet (Multi-Account List) -->
+        <!-- Ringkasan Akun / Dompet (Horizontal Carousel) -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Daftar Akun / Dompet</h3>
-            <button onclick="switchTab('transactions'); setTxSubTab('accounts')" class="text-xs font-bold text-emerald-400 hover:underline">Kelola Dompet</button>
+            <button onclick="openAccountModal()" class="text-xs font-bold text-emerald-400 hover:underline">+ Tambah Akun</button>
           </div>
 
           <div class="flex gap-2.5 overflow-x-auto no-scrollbar pb-1" id="dashAccountCarousel">
@@ -211,8 +211,8 @@
         <!-- Target Tabungan Highlights (Saldoin Savings Goals) -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Target Tabungan (Goals)</h3>
-            <button onclick="switchTab('analytics'); setAnalyticsSubTab('goals')" class="text-xs font-bold text-emerald-400 hover:underline">Lihat Semua</button>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Target Tabungan (Nabung)</h3>
+            <button onclick="openGoalModal()" class="text-xs font-bold text-emerald-400 hover:underline">+ Target Baru</button>
           </div>
 
           <div class="space-y-2.5" id="dashGoalsContainer">
@@ -235,76 +235,46 @@
       </main>
 
       <!-- ========================================== -->
-      <!-- TAB 2: TRANSAKSI & DOMPET                  -->
+      <!-- TAB 2: TRANSAKSI (HISTORY & FILTERS)       -->
       <!-- ========================================== -->
       <main id="tabTransactions" class="tab-content flex-1 p-4 space-y-4 hidden">
         
-        <!-- Sub-Tab Switcher -->
-        <div class="flex p-1 bg-slate-900 border border-slate-800 rounded-2xl">
-          <button onclick="setTxSubTab('history')" id="btnSubTxHistory"
-            class="flex-1 py-2 rounded-xl text-xs font-bold text-white bg-emerald-500 shadow-md transition">
-            <i class="fa-solid fa-list mr-1"></i> Riwayat Transaksi
-          </button>
-          <button onclick="setTxSubTab('accounts')" id="btnSubTxAccounts"
-            class="flex-1 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
-            <i class="fa-solid fa-wallet mr-1"></i> Kelola Dompet
-          </button>
-        </div>
-
-        <!-- SECTION A: RIWAYAT TRANSAKSI -->
-        <div id="sectionTxHistory" class="space-y-3">
-          
-          <!-- Month Picker & Search -->
-          <div class="flex gap-2">
-            <input type="month" id="txMonthFilter" onchange="filterAndRenderTransactions()"
-              class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white">
-            <div class="relative flex-1">
-              <span class="absolute left-3 top-2.5 text-slate-500 text-xs"><i class="fa-solid fa-magnifying-glass"></i></span>
-              <input type="text" id="txSearchInput" oninput="filterAndRenderTransactions()"
-                placeholder="Cari transaksi..."
-                class="w-full pl-8 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs font-semibold text-white placeholder-slate-600">
-            </div>
-          </div>
-
-          <!-- Type Filter Badges -->
-          <div class="flex gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="txTypeFilterContainer">
-            <button onclick="setTxTypeFilter('all', this)" class="tab-btn active px-3 py-1.5 rounded-xl text-xs font-bold">Semua</button>
-            <button onclick="setTxTypeFilter('pemasukan', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Pemasukan</button>
-            <button onclick="setTxTypeFilter('pengeluaran', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Pengeluaran</button>
-            <button onclick="setTxTypeFilter('tabungan', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Tabungan</button>
-            <button onclick="setTxTypeFilter('transfer', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Transfer</button>
-          </div>
-
-          <!-- Monthly Summary Banner -->
-          <div class="flex items-center justify-between p-3.5 bg-slate-900/80 border border-slate-800 rounded-2xl text-xs">
-            <span class="font-semibold text-slate-400">Total Pengeluaran Bulan Ini</span>
-            <span class="font-black text-rose-400 text-sm" id="txMonthlyExpenseTotal">Rp 0</span>
-          </div>
-
-          <!-- Transaction List -->
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl divide-y divide-slate-800/80 overflow-hidden" id="fullTxList">
-            <!-- Rendered dynamically -->
+        <!-- Month Picker & Search Bar -->
+        <div class="flex gap-2">
+          <input type="month" id="txMonthFilter" onchange="filterAndRenderTransactions()"
+            class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white">
+          <div class="relative flex-1">
+            <span class="absolute left-3 top-2.5 text-slate-500 text-xs"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text" id="txSearchInput" oninput="filterAndRenderTransactions()"
+              placeholder="Cari nama atau kategori..."
+              class="w-full pl-8 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs font-semibold text-white placeholder-slate-600">
           </div>
         </div>
 
-        <!-- SECTION B: KELOLA DOMPET (MULTI-ACCOUNT MANAGEMENT) -->
-        <div id="sectionTxAccounts" class="space-y-3 hidden">
-          <div class="flex items-center justify-between">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Daftar Akun / Dompet</h3>
-            <button onclick="openAccountModal()" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1 shadow-md shadow-emerald-500/20">
-              <i class="fa-solid fa-plus"></i> Tambah Dompet
-            </button>
-          </div>
+        <!-- Type Filter Badges -->
+        <div class="flex gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="txTypeFilterContainer">
+          <button onclick="setTxTypeFilter('all', this)" class="tab-btn active px-3 py-1.5 rounded-xl text-xs font-bold">Semua</button>
+          <button onclick="setTxTypeFilter('pemasukan', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Pemasukan</button>
+          <button onclick="setTxTypeFilter('pengeluaran', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Pengeluaran</button>
+          <button onclick="setTxTypeFilter('tabungan', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Tabungan</button>
+          <button onclick="setTxTypeFilter('transfer', this)" class="tab-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-400">Transfer</button>
+        </div>
 
-          <div class="grid grid-cols-1 gap-2.5" id="accountsListContainer">
-            <!-- Accounts rendered dynamically -->
-          </div>
+        <!-- Monthly Summary Banner -->
+        <div class="flex items-center justify-between p-3.5 bg-slate-900/80 border border-slate-800 rounded-2xl text-xs">
+          <span class="font-semibold text-slate-400">Total Pengeluaran Bulan Ini</span>
+          <span class="font-black text-rose-400 text-sm" id="txMonthlyExpenseTotal">Rp 0</span>
+        </div>
+
+        <!-- Transaction List -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl divide-y divide-slate-800/80 overflow-hidden" id="fullTxList">
+          <!-- Rendered dynamically -->
         </div>
 
       </main>
 
       <!-- ========================================== -->
-      <!-- TAB 3: ANALISIS, TARGET & RULES            -->
+      <!-- TAB 3: ANALISA (CHARTS & RULES)            -->
       <!-- ========================================== -->
       <main id="tabAnalytics" class="tab-content flex-1 p-4 space-y-4 hidden">
         
@@ -316,11 +286,11 @@
           </button>
           <button onclick="setAnalyticsSubTab('charts')" id="btnSubAnCharts"
             class="flex-1 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
-            <i class="fa-solid fa-chart-pie mr-1"></i> Analisis Chart
+            <i class="fa-solid fa-chart-pie mr-1"></i> Grafik & Kategori
           </button>
           <button onclick="setAnalyticsSubTab('rules')" id="btnSubAnRules"
             class="flex-1 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition">
-            <i class="fa-solid fa-sliders mr-1"></i> Auto-Split Rules
+            <i class="fa-solid fa-sliders mr-1"></i> Aturan Auto-Split
           </button>
         </div>
 
@@ -399,25 +369,100 @@
       </main>
 
       <!-- ========================================== -->
-      <!-- TAB 4: PENGATURAN & PROFIL                 -->
+      <!-- TAB 4: AKUN & PENGATURAN (SALDOIN PROFILE) -->
       <!-- ========================================== -->
       <main id="tabSettings" class="tab-content flex-1 p-4 space-y-4 hidden">
         
-        <!-- User Profile Card -->
+        <!-- User Profile Card (Saldoin Akun Screen) -->
         <div class="p-4 bg-slate-900 border border-slate-800 rounded-2xl flex items-center gap-3">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center text-xl font-extrabold">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-slate-950 flex items-center justify-center text-xl font-black">
             <i class="fa-solid fa-user"></i>
           </div>
           <div>
             <h3 class="text-base font-black text-white" id="settingsUserName">Akmal</h3>
-            <p class="text-xs text-slate-400" id="settingsUserRole">Pengguna FinTrack Pro</p>
+            <p class="text-xs text-slate-400" id="settingsUserRole">Pengguna Saldoin FinTrack Pro</p>
           </div>
         </div>
 
-        <!-- Google Apps Script API Settings -->
+        <!-- Menu List (Saldoin Menu Layout) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl divide-y divide-slate-800/80 overflow-hidden">
+          
+          <!-- 1. Kelola Akun Dompet -->
+          <button onclick="openAccountModal()" class="w-full p-3.5 flex items-center justify-between hover:bg-slate-800/40 transition">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-blue-500/15 text-blue-400 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-wallet"></i>
+              </div>
+              <div class="text-left">
+                <div class="text-xs font-extrabold text-white">Daftar Akun / Dompet</div>
+                <div class="text-[11px] text-slate-400">Atur Kas, Rekening Bank, & E-Wallet</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
+          </button>
+
+          <!-- 2. Kelola Master Kategori -->
+          <button onclick="openCategoryModal()" class="w-full p-3.5 flex items-center justify-between hover:bg-slate-800/40 transition">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-tags"></i>
+              </div>
+              <div class="text-left">
+                <div class="text-xs font-extrabold text-white">Kelola Kategori</div>
+                <div class="text-[11px] text-slate-400">Kategori Pengeluaran & Pemasukan</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
+          </button>
+
+          <!-- 3. Aturan Auto-Split -->
+          <button onclick="switchTab('analytics'); setAnalyticsSubTab('rules')" class="w-full p-3.5 flex items-center justify-between hover:bg-slate-800/40 transition">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-sliders"></i>
+              </div>
+              <div class="text-left">
+                <div class="text-xs font-extrabold text-white">Aturan Auto-Split Tabungan</div>
+                <div class="text-[11px] text-slate-400">Alokasi otomatis dari Pemasukan</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
+          </button>
+
+          <!-- 4. Target Tabungan (Nabung) -->
+          <button onclick="switchTab('analytics'); setAnalyticsSubTab('goals')" class="w-full p-3.5 flex items-center justify-between hover:bg-slate-800/40 transition">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-bullseye"></i>
+              </div>
+              <div class="text-left">
+                <div class="text-xs font-extrabold text-white">Target Tabungan (Nabung)</div>
+                <div class="text-[11px] text-slate-400">Impian & Milestone Tabungan</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
+          </button>
+
+          <!-- 5. Pengingat Harian (Notification) -->
+          <div class="p-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-rose-500/15 text-rose-400 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-bell"></i>
+              </div>
+              <div class="text-left">
+                <div class="text-xs font-extrabold text-white">Pengingat Catat Harian</div>
+                <div class="text-[11px] text-slate-400">Notifikasi jam 21:00 WIB</div>
+              </div>
+            </div>
+            <input type="checkbox" checked class="w-4 h-4 accent-emerald-500 rounded">
+          </div>
+
+        </div>
+
+        <!-- Google Apps Script API Settings Card -->
         <div class="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
           <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-            <i class="fa-solid fa-cloud text-emerald-400"></i> Koneksi Google Apps Script (Backend Database)
+            <i class="fa-solid fa-cloud text-emerald-400"></i> Database Google Apps Script API
           </h3>
           
           <div>
@@ -437,18 +482,6 @@
           </div>
         </div>
 
-        <!-- Master Categories Management -->
-        <div class="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Kelola Master Kategori</h3>
-            <button onclick="openCategoryModal()" class="text-xs font-bold text-emerald-400 hover:underline">+ Tambah Kategori</button>
-          </div>
-
-          <div class="space-y-2" id="settingsCategoriesList">
-            <!-- Rendered dynamically -->
-          </div>
-        </div>
-
       </main>
 
     </div>
@@ -461,7 +494,7 @@
       <!-- Tab 1: Dashboard -->
       <button onclick="switchTab('dashboard')" id="navDashboard" class="nav-item active flex-1 flex flex-col items-center py-1">
         <i class="fa-solid fa-house text-lg mb-0.5"></i>
-        <span class="text-[10px] font-bold">Utama</span>
+        <span class="text-[10px] font-bold">Dashboard</span>
       </button>
 
       <!-- Tab 2: Transaksi -->
@@ -478,15 +511,15 @@
         </button>
       </div>
 
-      <!-- Tab 3: Analisis & Target -->
+      <!-- Tab 3: Analisa -->
       <button onclick="switchTab('analytics')" id="navAnalytics" class="nav-item flex-1 flex flex-col items-center py-1">
         <i class="fa-solid fa-chart-pie text-lg mb-0.5"></i>
-        <span class="text-[10px] font-bold">Analisis</span>
+        <span class="text-[10px] font-bold">Analisa</span>
       </button>
 
-      <!-- Tab 4: Pengaturan -->
+      <!-- Tab 4: Akun -->
       <button onclick="switchTab('settings')" id="navSettings" class="nav-item flex-1 flex flex-col items-center py-1">
-        <i class="fa-solid fa-gear text-lg mb-0.5"></i>
+        <i class="fa-solid fa-user text-lg mb-0.5"></i>
         <span class="text-[10px] font-bold">Akun</span>
       </button>
     </nav>

@@ -1,5 +1,5 @@
-/* Custom styling for FinTrack v2.0 Mobile SPA - Saldoin Feature Parity + Premium Dark Emerald Aesthetic */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+/* Custom styling for FinTrack v2.0 - Saldoin 100% Layout & Visual Parity */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
   --primary-emerald: #10B981;
@@ -12,7 +12,7 @@
 
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #020617; /* Very dark background for container framing */
+  background-color: #020617;
   color: #F8FAFC;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
@@ -26,50 +26,18 @@ body {
   min-height: 100vh;
   background-color: #0F172A;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
 }
 
-/* Glassmorphism effects */
-.glass-card {
-  background: rgba(30, 41, 59, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
+/* Glassmorphism Navigation */
 .glass-nav {
-  background: rgba(15, 23, 42, 0.92);
+  background: rgba(15, 23, 42, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Emerald Card Gradients */
-.bg-emerald-gradient {
-  background: linear-gradient(135deg, #059669 0%, #047857 50%, #064E3B 100%);
-}
-
-.bg-emerald-glass {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.05) 100%);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.bg-rose-glass {
-  background: linear-gradient(135deg, rgba(244, 63, 94, 0.15) 0%, rgba(225, 29, 72, 0.05) 100%);
-  border: 1px solid rgba(244, 63, 94, 0.3);
-}
-
-.bg-blue-glass {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(29, 78, 216, 0.05) 100%);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-}
-
-.bg-purple-glass {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(126, 34, 206, 0.05) 100%);
-  border: 1px solid rgba(168, 85, 247, 0.3);
 }
 
 /* Hide Scrollbar */
@@ -103,7 +71,7 @@ body {
   transform: scale(0.92);
 }
 
-/* Progress Bar Fill */
+/* Progress Bar Fill Animation */
 .progress-bar-fill {
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -119,19 +87,7 @@ body {
   box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
 }
 
-/* Shimmer Skeleton Loading */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.skeleton-loading {
-  background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-/* Voice Recording Pulse Animation */
+/* Voice Recording Pulse */
 @keyframes pulseGlow {
   0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
   70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
@@ -164,4 +120,26 @@ input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: #10B981 !important;
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Saldoin Soft Category Icon Container Styles */
+.cat-icon-mint {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+}
+.cat-icon-rose {
+  background-color: rgba(244, 63, 94, 0.15);
+  color: #FB7185;
+}
+.cat-icon-blue {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60A5FA;
+}
+.cat-icon-purple {
+  background-color: rgba(168, 85, 247, 0.15);
+  color: #C084FC;
+}
+.cat-icon-amber {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #FBBF24;
 }
