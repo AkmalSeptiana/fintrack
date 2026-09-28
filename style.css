@@ -1,107 +1,43 @@
-/* Custom styling for FinTrack v2.0 - Saldoin 100% Exact Replica Theme & Layout */
+/* Custom styling for FinTrack v2.0 - Saldoin 100% Layout & Visual Parity */
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --bg-saldoin: #FBF8F5;
-  --primary-teal: #0D9488;
-  --primary-teal-dark: #0F766E;
-  --primary-amber: #F59E0B;
-  --primary-amber-dark: #D97706;
+  --primary-emerald: #10B981;
+  --primary-emerald-dark: #059669;
+  --primary-mint: #34D399;
+  --bg-app: #0F172A;
+  --card-bg: #1E293B;
+  --card-border: rgba(255, 255, 255, 0.08);
 }
 
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #E2E8F0; /* Outer desktop background */
-  color: #1E293B;
+  background-color: #020617;
+  color: #F8FAFC;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 
-/* Mobile Frame Wrapper (Saldoin Frame) */
+/* Mobile Frame Wrapper */
 .app-container {
   max-width: 480px;
   width: 100%;
   margin: 0 auto;
   min-height: 100vh;
-  background-color: #FBF8F5; /* Saldoin signature warm off-white background */
+  background-color: #0F172A;
   position: relative;
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
 }
 
-/* Saldoin Total Saldo Card Gradient (Bright Warm Amber) */
-.saldoin-card-amber {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-  box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.4);
-}
-
-/* Saldoin Floating Bottom Navigation Bar */
-.saldoin-floating-nav {
-  position: fixed;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 32px);
-  max-width: 448px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  border-radius: 9999px;
-  padding: 6px 12px;
-  box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.12);
-  z-index: 40;
-}
-
-.saldoin-nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-center;
-  padding: 6px 12px;
-  border-radius: 9999px;
-  color: #64748B;
-  font-size: 10px;
-  font-weight: 700;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.saldoin-nav-item.active {
-  background-color: #0D9488;
-  color: #FFFFFF;
-  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
-}
-
-.saldoin-nav-item.active i {
-  color: #FFFFFF;
-}
-
-/* Saldoin Pastel Cards & Containers */
-.bg-mint-soft {
-  background-color: #E6F7F3;
-  border: 1px solid rgba(16, 185, 129, 0.15);
-}
-
-.bg-rose-soft {
-  background-color: #FDF2F2;
-  border: 1px solid rgba(244, 63, 94, 0.15);
-}
-
-.bg-sky-soft {
-  background-color: #F0F9FF;
-  border: 1px solid rgba(56, 189, 248, 0.15);
-}
-
-.bg-amber-soft {
-  background-color: #FFFBEB;
-  border: 1px solid rgba(245, 158, 11, 0.15);
-}
-
-.bg-teal-soft {
-  background-color: #F0FDFA;
-  border: 1px solid rgba(20, 184, 166, 0.15);
+/* Glassmorphism Navigation */
+.glass-nav {
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Hide Scrollbar */
@@ -113,9 +49,54 @@ body {
   scrollbar-width: none;
 }
 
+/* Bottom Nav Active State */
+.nav-item {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #64748B;
+}
+.nav-item.active {
+  color: #10B981;
+}
+.nav-item.active i {
+  transform: translateY(-2px) scale(1.15);
+}
+
+/* Floating Action Button Pulse */
+.fab-btn {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  box-shadow: 0 8px 24px -4px rgba(16, 185, 129, 0.5);
+  transition: all 0.2s ease-in-out;
+}
+.fab-btn:active {
+  transform: scale(0.92);
+}
+
 /* Progress Bar Fill Animation */
 .progress-bar-fill {
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tab Selector Buttons */
+.tab-btn {
+  transition: all 0.2s ease-in-out;
+}
+.tab-btn.active {
+  background-color: #10B981;
+  color: #FFFFFF;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+/* Voice Recording Pulse */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+  70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.recording-pulse {
+  animation: pulseGlow 1.5s infinite;
+  background-color: #EF4444 !important;
 }
 
 /* Modal Slide Animations */
@@ -137,6 +118,28 @@ body {
 /* Custom Input Focus Effects */
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: #0D9488 !important;
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2) !important;
+  border-color: #10B981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Saldoin Soft Category Icon Container Styles */
+.cat-icon-mint {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+}
+.cat-icon-rose {
+  background-color: rgba(244, 63, 94, 0.15);
+  color: #FB7185;
+}
+.cat-icon-blue {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60A5FA;
+}
+.cat-icon-purple {
+  background-color: rgba(168, 85, 247, 0.15);
+  color: #C084FC;
+}
+.cat-icon-amber {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #FBBF24;
 }

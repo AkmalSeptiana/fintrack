@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
- * APLIKASI SALDOIN FINTRACK PRO
- * Single Page Application Logic - 100% Saldoin Exact Replica
+ * APLIKASI PELACAK KEUANGAN PRIBADI (FINTRACK v2.0)
+ * Single Page Application Logic - Saldoin 100% Feature Parity & Neat UI
  * ==============================================================================
  */
 
@@ -20,10 +20,11 @@ const state = {
   
   // Accounts / Dompet Master Data
   accounts: JSON.parse(localStorage.getItem('app_accounts')) || [
-    { id: 'ACC-1', namaAkun: 'Kas Tunai', tipe: 'Tunai', saldoAwal: 500000, warnaIkon: '#0D9488', icon: 'fa-wallet' },
-    { id: 'ACC-2', namaAkun: 'Bank BCA', tipe: 'Bank', saldoAwal: 1410000, warnaIkon: '#0284C7', icon: 'fa-building-columns' },
-    { id: 'ACC-3', namaAkun: 'Bank BRI', tipe: 'Bank', saldoAwal: 1000000, warnaIkon: '#0369A1', icon: 'fa-credit-card' },
-    { id: 'ACC-4', namaAkun: 'GoPay', tipe: 'E-Wallet', saldoAwal: 350000, warnaIkon: '#00897B', icon: 'fa-mobile-screen-button' }
+    { id: 'ACC-1', namaAkun: 'Kas Tunai', tipe: 'Tunai', saldoAwal: 500000, warnaIkon: '#10B981', icon: 'fa-wallet' },
+    { id: 'ACC-2', namaAkun: 'Bank BCA', tipe: 'Bank', saldoAwal: 4500000, warnaIkon: '#3B82F6', icon: 'fa-building-columns' },
+    { id: 'ACC-3', namaAkun: 'Bank BRI', tipe: 'Bank', saldoAwal: 2000000, warnaIkon: '#0284C7', icon: 'fa-credit-card' },
+    { id: 'ACC-4', namaAkun: 'GoPay', tipe: 'E-Wallet', saldoAwal: 350000, warnaIkon: '#06B6D4', icon: 'fa-mobile-screen-button' },
+    { id: 'ACC-5', namaAkun: 'DANA', tipe: 'E-Wallet', saldoAwal: 150000, warnaIkon: '#1D4ED8', icon: 'fa-coins' }
   ],
 
   // Savings Goals / Target Tabungan
@@ -53,13 +54,15 @@ const state = {
     ],
     pengeluaran: [
       { rowId: 2, tanggal: '2026-09-02', nama: 'Belanja Bulanan Supermarket', kategori: 'Belanja Bulanan', jumlah: 1250000, wallet: 'Bank BCA', keterangan: 'Bahan makanan' },
-      { rowId: 3, tanggal: '2026-09-05', nama: 'Tagihan PLN & IndiHome', kategori: 'Tagihan & Utilitas', jumlah: 650000, wallet: 'Bank BRI', keterangan: 'Listrik + WiFi' }
+      { rowId: 3, tanggal: '2026-09-05', nama: 'Tagihan PLN & IndiHome', kategori: 'Tagihan & Utilitas', jumlah: 650000, wallet: 'Bank BRI', keterangan: 'Listrik + WiFi' },
+      { rowId: 4, tanggal: '2026-09-10', nama: 'Makan Malam Resto', kategori: 'Makanan & Minuman', jumlah: 85000, wallet: 'Kas Tunai', keterangan: 'Makan bersama' },
+      { rowId: 5, tanggal: '2026-09-15', nama: 'Isi Bensin Motor', kategori: 'Transportasi', jumlah: 150000, wallet: 'GoPay', keterangan: 'Pertamax' }
     ],
     tabungan: [
       { rowId: 2, tanggal: '2026-09-01', nama: 'Auto-Split: Dana Darurat 6 Bulan', kategori: 'Tabungan Otomatis', jumlah: 2550000, walletSource: 'Bank BCA', walletDestination: 'Bank BCA', keterangan: 'Alokasi Otomatis Gaji' }
     ],
     transfer: [
-      { rowId: 2, tanggal: '2026-09-28', walletSource: 'Bank BRI', walletDestination: 'Kas Tunai', jumlah: 100000, biayaAdmin: 0, catatan: 'Tarik tunai' }
+      { rowId: 2, tanggal: '2026-09-03', walletSource: 'Bank BCA', walletDestination: 'GoPay', jumlah: 500000, biayaAdmin: 1000, catatan: 'Topup saldo GoPay' }
     ]
   },
 
@@ -73,8 +76,10 @@ const state = {
 
 // Application Initialization
 document.addEventListener('DOMContentLoaded', () => {
+  // Setup modal backdrops click-to-dismiss
   setupModalBackdrops();
 
+  // Check auth
   if (!state.currentUser) {
     showAuthScreen();
   } else {
@@ -130,13 +135,17 @@ function handleLogout() {
 }
 
 function initApp() {
+  // Set user greeting
   const user = state.currentUser ? state.currentUser.username : 'Akmal';
+  const nameEl = document.getElementById('currentUserName');
   const greetEl = document.getElementById('userGreeting');
   const setValName = document.getElementById('settingsUserName');
 
-  if (greetEl) greetEl.innerText = `${getGreetingTime()}`;
+  if (nameEl) nameEl.innerText = user;
+  if (greetEl) greetEl.innerText = getGreetingTime();
   if (setValName) setValName.innerText = user;
 
+  // Set default month in filters & forms
   const todayStr = new Date().toISOString().split('T')[0];
   const txMonthFilter = document.getElementById('txMonthFilter');
   if (txMonthFilter && !txMonthFilter.value) txMonthFilter.value = todayStr.substring(0, 7);
@@ -147,6 +156,7 @@ function initApp() {
   const gasApiUrlInput = document.getElementById('gasApiUrlInput');
   if (gasApiUrlInput) gasApiUrlInput.value = state.apiUrl;
 
+  // Sync or Render
   if (state.apiUrl) {
     syncDataWithApi();
   } else {
@@ -156,10 +166,10 @@ function initApp() {
 
 function getGreetingTime() {
   const hr = new Date().getHours();
-  if (hr >= 4 && hr < 11) return 'Selamat pagi';
-  if (hr >= 11 && hr < 15) return 'Selamat siang';
-  if (hr >= 15 && hr < 18) return 'Selamat sore';
-  return 'Selamat malam';
+  if (hr >= 4 && hr < 11) return 'Selamat Pagi,';
+  if (hr >= 11 && hr < 15) return 'Selamat Siang,';
+  if (hr >= 15 && hr < 18) return 'Selamat Sore,';
+  return 'Selamat Malam,';
 }
 
 function saveLocalCache() {
@@ -184,7 +194,7 @@ function renderAll() {
 }
 
 // ==========================================
-// 1. DASHBOARD RENDERER & LOGIC (EXACT SALDOIN)
+// 1. DASHBOARD RENDERER & LOGIC
 // ==========================================
 
 function renderDashboard() {
@@ -200,12 +210,12 @@ function renderDashboard() {
 
   const eyeIcon = document.getElementById('balanceEyeIcon');
   if (eyeIcon) {
-    eyeIcon.className = state.isBalanceHidden ? 'fa-solid fa-eye-slash text-white/80' : 'fa-solid fa-eye text-white/80';
+    eyeIcon.className = state.isBalanceHidden ? 'fa-solid fa-eye-slash text-emerald-200' : 'fa-solid fa-eye text-emerald-200';
   }
 
   const badgeEl = document.getElementById('totalAccountsBadge');
   if (badgeEl) {
-    badgeEl.innerText = `${state.accounts.length} akun`;
+    badgeEl.innerText = `${state.accounts.length} Dompet Aktif`;
   }
 
   // 2. Income & Expense for Current Selected Month
@@ -227,32 +237,76 @@ function renderDashboard() {
 
   const dashIncEl = document.getElementById('dashIncomeDisplay');
   const dashExpEl = document.getElementById('dashExpenseDisplay');
-  if (dashIncEl) dashIncEl.innerText = formatRupiahShort(monthlyIncome);
-  if (dashExpEl) dashExpEl.innerText = formatRupiahShort(monthlyExpense);
+  if (dashIncEl) dashIncEl.innerText = formatRupiah(monthlyIncome);
+  if (dashExpEl) dashExpEl.innerText = formatRupiah(monthlyExpense);
 
-  // 3. Render Recent Transactions (Exact Saldoin Row Style)
+  // 3. Render Horizontal Carousel Accounts
+  const carContainer = document.getElementById('dashAccountCarousel');
+  if (carContainer) {
+    carContainer.innerHTML = '';
+    state.accounts.forEach(acc => {
+      const bal = accountBalances[acc.namaAkun] !== undefined ? accountBalances[acc.namaAkun] : (acc.saldoAwal || 0);
+      const card = document.createElement('div');
+      card.className = 'min-w-[145px] p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-1.5 flex-shrink-0 hover:border-slate-700 transition cursor-pointer';
+      card.onclick = () => { switchTab('transactions'); setTxSubTab('accounts'); };
+      card.innerHTML = `
+        <div class="flex items-center justify-between text-xs">
+          <span class="w-3 h-3 rounded-full flex items-center justify-center text-[10px] text-white" style="background-color: ${acc.warnaIkon || '#10B981'}">
+            <i class="fa-solid ${acc.icon || 'fa-wallet'}"></i>
+          </span>
+          <span class="text-[10px] font-extrabold text-slate-500 uppercase">${acc.tipe}</span>
+        </div>
+        <div class="text-xs font-bold text-slate-300 truncate">${acc.namaAkun}</div>
+        <div class="text-sm font-black text-white">${state.isBalanceHidden ? '••••••' : formatRupiah(bal)}</div>
+      `;
+      carContainer.appendChild(card);
+    });
+  }
+
+  // 4. Render Target Tabungan Highlights
+  const goalDashContainer = document.getElementById('dashGoalsContainer');
+  if (goalDashContainer) {
+    goalDashContainer.innerHTML = '';
+    if (state.goals.length === 0) {
+      goalDashContainer.innerHTML = `<div class="p-4 bg-slate-900/60 border border-slate-800 rounded-2xl text-xs text-slate-500 text-center">Belum ada target tabungan. Klik + Target Baru.</div>`;
+    } else {
+      state.goals.slice(0, 2).forEach(g => {
+        const pct = Math.min(100, Math.round(((g.terkumpul || 0) / (g.nominalTarget || 1)) * 100));
+        const item = document.createElement('div');
+        item.className = 'p-3.5 bg-slate-900 border border-slate-800 rounded-2xl space-y-2 hover:border-slate-700 transition';
+        item.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-extrabold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-bullseye text-emerald-400"></i> ${g.namaTarget}
+            </span>
+            <span class="text-emerald-400 font-black">${pct}%</span>
+          </div>
+          <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full progress-bar-fill" style="width: ${pct}%"></div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] text-slate-400">
+            <span>Terkumpul: <b class="text-white">${formatRupiah(g.terkumpul || 0)}</b></span>
+            <span>Target: <b class="text-white">${formatRupiah(g.nominalTarget || 0)}</b></span>
+          </div>
+        `;
+        goalDashContainer.appendChild(item);
+      });
+    }
+  }
+
+  // 5. Render Recent Transactions (Top 5)
   const recentListEl = document.getElementById('dashRecentTxList');
   if (recentListEl) {
     const allRecent = getAllUnifiedTransactions().slice(0, 5);
     recentListEl.innerHTML = '';
     if (allRecent.length === 0) {
-      recentListEl.innerHTML = `<div class="p-5 text-xs text-slate-400 text-center">Belum ada transaksi. Ketuk "Catat" di bawah buat mulai.</div>`;
+      recentListEl.innerHTML = `<div class="p-5 text-xs text-slate-500 text-center">Belum ada transaksi dicatat bulan ini.</div>`;
     } else {
       allRecent.forEach(tx => {
-        recentListEl.appendChild(createSaldoinTransactionRowElement(tx));
+        recentListEl.appendChild(createTransactionRowElement(tx));
       });
     }
   }
-}
-
-function formatRupiahShort(amount) {
-  if (amount >= 1000000) {
-    return `Rp ${(amount / 1000000).toFixed(1)} jt`.replace('.0', '');
-  }
-  if (amount >= 1000) {
-    return `Rp ${(amount / 1000).toFixed(0)} rb`;
-  }
-  return formatRupiah(amount);
 }
 
 function toggleBalanceVisibility() {
@@ -314,7 +368,7 @@ function getAllUnifiedTransactions() {
     list.push({
       ...item,
       type: 'transfer',
-      nama: `Transfer ke akun lain`,
+      nama: `Transfer: ${item.walletSource} ➔ ${item.walletDestination}`,
       displayCategory: 'Transfer'
     });
   });
@@ -323,45 +377,47 @@ function getAllUnifiedTransactions() {
   return list;
 }
 
-function createSaldoinTransactionRowElement(tx) {
+function createTransactionRowElement(tx) {
   const row = document.createElement('div');
-  row.className = 'py-3 flex items-center justify-between hover:bg-slate-50/80 transition cursor-pointer';
+  row.className = 'p-3.5 flex items-center justify-between hover:bg-slate-800/40 transition border-b border-slate-800/60 last:border-none';
 
-  let iconBg = 'bg-slate-100 text-slate-600';
-  let iconName = 'fa-arrow-right-arrow-left';
-  let prefix = '-';
-  let titleText = tx.nama || tx.displayCategory;
-  let subtitleText = `via ${tx.wallet || tx.walletSource || 'TUNAI'}`;
+  let iconClass = 'fa-arrow-up-right text-rose-400 bg-rose-500/15';
+  let prefix = '- ';
+  let amountClass = 'text-rose-400';
 
   if (tx.type === 'pemasukan') {
-    iconBg = 'bg-emerald-100 text-emerald-600';
-    iconName = 'fa-arrow-down';
-    prefix = '+';
-  } else if (tx.type === 'pengeluaran') {
-    iconBg = 'bg-rose-100 text-rose-600';
-    iconName = 'fa-arrow-up';
-    prefix = '-';
+    iconClass = 'fa-arrow-down-left text-emerald-400 bg-emerald-500/15';
+    prefix = '+ ';
+    amountClass = 'text-emerald-400';
+  } else if (tx.type === 'tabungan') {
+    iconClass = 'fa-piggy-bank text-purple-400 bg-purple-500/15';
+    prefix = '- ';
+    amountClass = 'text-purple-400';
   } else if (tx.type === 'transfer') {
-    iconBg = 'bg-slate-100 text-slate-600';
-    iconName = 'fa-arrow-right-arrow-left';
-    prefix = '-';
-    titleText = `Transfer ke akun lain · Hari ini`;
-    subtitleText = `via ${tx.walletSource || 'BRI'}`;
+    iconClass = 'fa-arrow-right-arrow-left text-blue-400 bg-blue-500/15';
+    prefix = '';
+    amountClass = 'text-blue-400';
   }
+
+  const iconName = iconClass.split(' ')[0];
 
   row.innerHTML = `
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-2xl ${iconBg} flex items-center justify-center text-sm font-black flex-shrink-0">
+      <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-bold ${iconClass}">
         <i class="fa-solid ${iconName}"></i>
       </div>
       <div>
-        <div class="text-xs font-extrabold text-slate-800 line-clamp-1">${titleText}</div>
-        <div class="text-[11px] text-slate-400 font-medium">${subtitleText}</div>
+        <div class="text-xs font-extrabold text-white line-clamp-1">${tx.nama || tx.displayCategory}</div>
+        <div class="text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5 font-medium">
+          <span>${tx.tanggal}</span>
+          <span>•</span>
+          <span class="text-slate-400 font-semibold">${tx.wallet || tx.walletSource || ''}</span>
+        </div>
       </div>
     </div>
     <div class="text-right">
-      <div class="text-xs font-black text-slate-800">${prefix}${formatRupiah(tx.jumlah || 0)}</div>
-      <button onclick="deleteTransaction('${tx.type}', ${tx.rowId})" class="text-[10px] text-slate-400 hover:text-rose-500 font-bold">Hapus</button>
+      <div class="text-xs font-black ${amountClass}">${prefix}${formatRupiah(tx.jumlah || 0)}</div>
+      <button onclick="deleteTransaction('${tx.type}', ${tx.rowId})" class="text-[10px] text-slate-500 hover:text-rose-400 font-bold mt-0.5 transition">Hapus</button>
     </div>
   `;
 
@@ -411,10 +467,10 @@ function filterAndRenderTransactions() {
 
   container.innerHTML = '';
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="p-6 text-xs text-slate-400 text-center">Tidak ada transaksi ditemukan.</div>`;
+    container.innerHTML = `<div class="p-6 text-xs text-slate-500 text-center">Tidak ada transaksi ditemukan.</div>`;
   } else {
     filtered.forEach(tx => {
-      container.appendChild(createSaldoinTransactionRowElement(tx));
+      container.appendChild(createTransactionRowElement(tx));
     });
   }
 }
@@ -424,14 +480,34 @@ function setTxTypeFilter(type, btnElement) {
   const btns = document.querySelectorAll('#txTypeFilterContainer .tab-btn');
   btns.forEach(b => {
     b.classList.remove('active');
-    b.classList.add('bg-white', 'text-slate-600');
+    b.classList.add('bg-slate-900', 'text-slate-400');
   });
 
   if (btnElement) {
     btnElement.classList.add('active');
-    btnElement.classList.remove('bg-white', 'text-slate-600');
+    btnElement.classList.remove('bg-slate-900', 'text-slate-400');
   }
   filterAndRenderTransactions();
+}
+
+function setTxSubTab(tab) {
+  state.txSubTab = tab;
+  const secHist = document.getElementById('sectionTxHistory');
+  const secAcc = document.getElementById('sectionTxAccounts');
+  const btnHist = document.getElementById('btnSubTxHistory');
+  const btnAcc = document.getElementById('btnSubTxAccounts');
+
+  if (tab === 'history') {
+    if (secHist) secHist.classList.remove('hidden');
+    if (secAcc) secAcc.classList.add('hidden');
+    if (btnHist) btnHist.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-white bg-emerald-500 shadow-md transition';
+    if (btnAcc) btnAcc.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition';
+  } else {
+    if (secHist) secHist.classList.add('hidden');
+    if (secAcc) secAcc.classList.remove('hidden');
+    if (btnAcc) btnAcc.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-white bg-emerald-500 shadow-md transition';
+    if (btnHist) btnHist.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition';
+  }
 }
 
 function renderAccounts() {
@@ -444,22 +520,22 @@ function renderAccounts() {
   state.accounts.forEach(acc => {
     const bal = balances[acc.namaAkun] !== undefined ? balances[acc.namaAkun] : (acc.saldoAwal || 0);
     const div = document.createElement('div');
-    div.className = 'p-4 bg-white border border-slate-100 rounded-3xl flex items-center justify-between shadow-sm';
+    div.className = 'p-3.5 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between hover:border-slate-700 transition';
     div.innerHTML = `
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold" style="background-color: ${acc.warnaIkon || '#0D9488'}">
+        <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold" style="background-color: ${acc.warnaIkon || '#10B981'}">
           <i class="fa-solid ${acc.icon || 'fa-wallet'}"></i>
         </div>
         <div>
-          <div class="text-xs font-extrabold text-slate-800">${acc.namaAkun}</div>
+          <div class="text-xs font-extrabold text-white">${acc.namaAkun}</div>
           <div class="text-[11px] text-slate-400 font-medium">${acc.tipe} • Saldo Awal: ${formatRupiah(acc.saldoAwal || 0)}</div>
         </div>
       </div>
       <div class="text-right">
-        <div class="text-xs font-black text-slate-800">${state.isBalanceHidden ? '••••••' : formatRupiah(bal)}</div>
+        <div class="text-xs font-black text-emerald-400">${state.isBalanceHidden ? '••••••' : formatRupiah(bal)}</div>
         <div class="flex gap-2 justify-end mt-1">
-          <button onclick="editAccount('${acc.id}')" class="text-[10px] text-slate-400 hover:text-slate-800 font-bold transition">Edit</button>
-          <button onclick="deleteAccount('${acc.id}')" class="text-[10px] text-slate-400 hover:text-rose-500 font-bold transition">Hapus</button>
+          <button onclick="editAccount('${acc.id}')" class="text-[10px] text-slate-400 hover:text-white font-bold transition">Edit</button>
+          <button onclick="deleteAccount('${acc.id}')" class="text-[10px] text-slate-500 hover:text-rose-400 font-bold transition">Hapus</button>
         </div>
       </div>
     `;
@@ -483,19 +559,19 @@ function setAnalyticsSubTab(tab) {
 
   [secG, secC, secR].forEach(s => s?.classList.add('hidden'));
   [btnG, btnC, btnR].forEach(b => {
-    if (b) b.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-800 transition';
+    if (b) b.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition';
   });
 
   if (tab === 'goals') {
     secG?.classList.remove('hidden');
-    if (btnG) btnG.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-white bg-teal-600 shadow-md transition';
+    if (btnG) btnG.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-white bg-emerald-500 shadow-md transition';
   } else if (tab === 'charts') {
     secC?.classList.remove('hidden');
-    if (btnC) btnC.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-white bg-teal-600 shadow-md transition';
+    if (btnC) btnC.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-white bg-emerald-500 shadow-md transition';
     renderAnalyticsCharts();
   } else if (tab === 'rules') {
     secR?.classList.remove('hidden');
-    if (btnR) btnR.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-white bg-teal-600 shadow-md transition';
+    if (btnR) btnR.className = 'flex-1 py-2 rounded-xl text-xs font-bold text-white bg-purple-500 shadow-md transition';
   }
 }
 
@@ -505,7 +581,7 @@ function renderGoals() {
 
   container.innerHTML = '';
   if (state.goals.length === 0) {
-    container.innerHTML = `<div class="p-6 bg-white border border-slate-100 rounded-3xl text-xs text-slate-400 text-center">Belum ada target tabungan yang dibuat.</div>`;
+    container.innerHTML = `<div class="p-6 bg-slate-900/60 border border-slate-800 rounded-2xl text-xs text-slate-500 text-center">Belum ada target tabungan yang dibuat.</div>`;
     return;
   }
 
@@ -514,37 +590,37 @@ function renderGoals() {
     const sisaHari = calculateDaysRemaining(g.tenggatWaktu);
     
     const div = document.createElement('div');
-    div.className = 'p-4 bg-white border border-slate-100 rounded-3xl space-y-3 shadow-sm';
+    div.className = 'p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3 hover:border-slate-700 transition';
     div.innerHTML = `
       <div class="flex items-start justify-between">
         <div>
-          <div class="text-xs font-black text-slate-800 flex items-center gap-2">
+          <div class="text-xs font-black text-white flex items-center gap-2">
             ${g.namaTarget}
-            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${pct >= 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'}">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold ${pct >= 100 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'}">
               ${pct >= 100 ? 'Tercapai! 🎉' : 'Aktif'}
             </span>
           </div>
           <div class="text-[11px] text-slate-400 mt-0.5 font-medium">Penampung: <b>${g.dompetTujuan || 'Bank BCA'}</b> • Deadline: <b>${g.tenggatWaktu}</b> (${sisaHari})</div>
         </div>
         <div class="text-right">
-          <div class="text-base font-black text-amber-500">${pct}%</div>
+          <div class="text-base font-black text-emerald-400">${pct}%</div>
         </div>
       </div>
 
-      <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-        <div class="bg-amber-500 h-full progress-bar-fill" style="width: ${pct}%"></div>
+      <div class="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden border border-slate-800">
+        <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full progress-bar-fill" style="width: ${pct}%"></div>
       </div>
 
-      <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
-        <span class="text-slate-500 font-medium">Terkumpul: <b class="text-slate-800">${formatRupiah(g.terkumpul || 0)}</b></span>
-        <span class="text-slate-500 font-medium">Target: <b class="text-slate-800">${formatRupiah(g.nominalTarget || 0)}</b></span>
+      <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-800/80">
+        <span class="text-slate-400 font-medium">Terkumpul: <b class="text-white">${formatRupiah(g.terkumpul || 0)}</b></span>
+        <span class="text-slate-400 font-medium">Target: <b class="text-white">${formatRupiah(g.nominalTarget || 0)}</b></span>
       </div>
 
       <div class="flex gap-2 justify-end pt-1">
-        <button onclick="openDepositGoalModal('${g.id}')" class="px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-700 text-xs font-bold rounded-full transition">
+        <button onclick="openDepositGoalModal('${g.id}')" class="px-3 py-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 text-xs font-bold rounded-xl border border-emerald-500/30 transition">
           + Setor Manual
         </button>
-        <button onclick="editGoal('${g.id}')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-full transition">
+        <button onclick="editGoal('${g.id}')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl border border-slate-700 transition">
           Edit
         </button>
       </div>
@@ -570,7 +646,7 @@ function renderRules() {
 
   container.innerHTML = '';
   if (state.rules.length === 0) {
-    container.innerHTML = `<div class="p-6 bg-white border border-slate-100 rounded-3xl text-xs text-slate-400 text-center">Belum ada aturan alokasi otomatis. Klik + Aturan Baru.</div>`;
+    container.innerHTML = `<div class="p-6 bg-slate-900/60 border border-slate-800 rounded-2xl text-xs text-slate-500 text-center">Belum ada aturan alokasi otomatis. Klik + Aturan Baru.</div>`;
     return;
   }
 
@@ -579,31 +655,31 @@ function renderRules() {
     (r.targetAlokasi || []).forEach(t => totalPct += (t.percentage || 0));
 
     const div = document.createElement('div');
-    div.className = 'p-4 bg-white border border-slate-100 rounded-3xl space-y-3 shadow-sm';
+    div.className = 'p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3 hover:border-slate-700 transition';
     
     let allocListHtml = (r.targetAlokasi || []).map(t => `
-      <div class="flex items-center justify-between text-xs py-1 border-b border-slate-100 last:border-none">
-        <span class="text-slate-700 font-semibold">${t.targetName}</span>
-        <span class="text-teal-600 font-bold">${t.percentage}%</span>
+      <div class="flex items-center justify-between text-xs py-1 border-b border-slate-800/60 last:border-none">
+        <span class="text-slate-300 font-semibold">${t.targetName}</span>
+        <span class="text-purple-400 font-bold">${t.percentage}%</span>
       </div>
     `).join('');
 
     div.innerHTML = `
       <div class="flex items-start justify-between">
         <div>
-          <div class="text-xs font-black text-slate-800 flex items-center gap-2">
+          <div class="text-xs font-black text-white flex items-center gap-2">
             ${r.namaAturan}
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-teal-100 text-teal-700">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-500/20 text-purple-300 border border-purple-500/30">
               ${r.statusAktif || 'Aktif'}
             </span>
           </div>
           <div class="text-[11px] text-slate-400 mt-0.5 font-medium">Trigger: Pemasukan $\\ge$ <b>${formatRupiah(r.minPemasukan || 0)}</b></div>
         </div>
-        <button onclick="deleteRule('${r.id}')" class="text-xs text-slate-400 hover:text-rose-500 font-bold transition">Hapus</button>
+        <button onclick="deleteRule('${r.id}')" class="text-xs text-slate-500 hover:text-rose-400 font-bold transition">Hapus</button>
       </div>
 
-      <div class="bg-slate-50 p-3 rounded-2xl border border-slate-100 space-y-0.5">
-        <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Distribusi Alokasi Tabungan (${totalPct}%)</div>
+      <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-0.5">
+        <div class="text-[10px] font-bold text-slate-500 uppercase mb-1">Distribusi Alokasi Tabungan (${totalPct}%)</div>
         ${allocListHtml}
       </div>
     `;
@@ -636,14 +712,14 @@ function renderAnalyticsCharts() {
 
     const labels = Object.keys(categoryTotals);
     const values = Object.values(categoryTotals);
-    const bgColors = ['#0D9488', '#0284C7', '#8B5CF6', '#F43F5E', '#F59E0B', '#06B6D4', '#64748B'];
+    const bgColors = ['#10B981', '#3B82F6', '#8B5CF6', '#F43F5E', '#F59E0B', '#06B6D4', '#64748B'];
 
     if (labels.length === 0) {
       state.expenseChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: ['Belum Ada Data'],
-          datasets: [{ data: [1], backgroundColor: ['#E2E8F0'] }]
+          datasets: [{ data: [1], backgroundColor: ['#334155'] }]
         },
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
       });
@@ -652,13 +728,13 @@ function renderAnalyticsCharts() {
         type: 'doughnut',
         data: {
           labels: labels,
-          datasets: [{ data: values, backgroundColor: bgColors, borderWidth: 2, borderColor: '#FFFFFF' }]
+          datasets: [{ data: values, backgroundColor: bgColors, borderWidth: 2, borderColor: '#0F172A' }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'bottom', labels: { color: '#64748B', font: { size: 10, family: 'Plus Jakarta Sans' } } }
+            legend: { position: 'bottom', labels: { color: '#94A3B8', font: { size: 10, family: 'Plus Jakarta Sans' } } }
           }
         }
       });
@@ -671,7 +747,7 @@ function renderAnalyticsCharts() {
     const sortedCats = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
 
     if (sortedCats.length === 0) {
-      rankingContainer.innerHTML = `<div class="text-xs text-slate-400 text-center py-2">Belum ada pengeluaran di bulan ini.</div>`;
+      rankingContainer.innerHTML = `<div class="text-xs text-slate-500 text-center py-2">Belum ada pengeluaran di bulan ini.</div>`;
     } else {
       sortedCats.forEach(([cat, amt]) => {
         const pct = totalExpMonth > 0 ? Math.round((amt / totalExpMonth) * 100) : 0;
@@ -679,11 +755,11 @@ function renderAnalyticsCharts() {
         row.className = 'space-y-1';
         row.innerHTML = `
           <div class="flex items-center justify-between text-xs">
-            <span class="font-bold text-slate-800">${cat}</span>
-            <span class="text-slate-500 font-semibold">${formatRupiah(amt)} (${pct}%)</span>
+            <span class="font-bold text-white">${cat}</span>
+            <span class="text-slate-400 font-semibold">${formatRupiah(amt)} (${pct}%)</span>
           </div>
-          <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-            <div class="bg-teal-600 h-full rounded-full" style="width: ${pct}%"></div>
+          <div class="w-full bg-slate-950 rounded-full h-1.5 overflow-hidden border border-slate-800">
+            <div class="bg-emerald-500 h-full rounded-full" style="width: ${pct}%"></div>
           </div>
         `;
         rankingContainer.appendChild(row);
@@ -720,12 +796,12 @@ function setTxTypeForm(type) {
   const btnSav = document.getElementById('btnFormSav');
 
   [btnIn, btnOut, btnSav].forEach(b => {
-    if (b) b.className = 'py-2 rounded-xl text-slate-500 hover:text-slate-800 font-bold transition';
+    if (b) b.className = 'py-2 rounded-xl text-slate-400 hover:text-white font-bold transition';
   });
 
-  if (type === 'pemasukan' && btnIn) btnIn.className = 'py-2 rounded-xl bg-teal-600 text-white shadow-md font-black transition';
+  if (type === 'pemasukan' && btnIn) btnIn.className = 'py-2 rounded-xl bg-emerald-500 text-slate-950 shadow-md font-black transition';
   if (type === 'pengeluaran' && btnOut) btnOut.className = 'py-2 rounded-xl bg-rose-500 text-white shadow-md font-black transition';
-  if (type === 'tabungan' && btnSav) btnSav.className = 'py-2 rounded-xl bg-amber-500 text-white shadow-md font-black transition';
+  if (type === 'tabungan' && btnSav) btnSav.className = 'py-2 rounded-xl bg-purple-500 text-white shadow-md font-black transition';
 
   populateCategorySelectOptions();
   previewAutoSplitTrigger();
@@ -1099,12 +1175,12 @@ function addRuleAllocationRow() {
   let optionsHtml = state.goals.map(g => `<option value="${g.id}">${g.namaTarget}</option>`).join('');
 
   row.innerHTML = `
-    <select class="rule-target-select flex-1 px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+    <select class="rule-target-select flex-1 px-2.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold text-white">
       ${optionsHtml || '<option value="GOAL-1">Dana Darurat</option>'}
     </select>
-    <input type="number" min="1" max="100" value="20" placeholder="%" class="rule-pct-input w-16 px-2.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-teal-600">
+    <input type="number" min="1" max="100" value="20" placeholder="%" class="rule-pct-input w-16 px-2.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs font-bold text-purple-400">
     <span class="text-xs font-bold text-slate-500">%</span>
-    <button type="button" onclick="this.parentElement.remove()" class="text-slate-400 hover:text-rose-500 text-xs px-2"><i class="fa-solid fa-trash"></i></button>
+    <button type="button" onclick="this.parentElement.remove()" class="text-slate-600 hover:text-rose-400 text-xs px-2"><i class="fa-solid fa-trash"></i></button>
   `;
 
   container.appendChild(row);
@@ -1169,7 +1245,7 @@ function openAccountModal() {
   document.getElementById('accIdInput').value = '';
   document.getElementById('accNameInput').value = '';
   document.getElementById('accBalanceInput').value = '0';
-  document.getElementById('accColorInput').value = '#0D9488';
+  document.getElementById('accColorInput').value = '#10B981';
 
   const m = document.getElementById('modalAccount');
   if (m) m.classList.remove('hidden');
@@ -1183,7 +1259,7 @@ function editAccount(accId) {
   document.getElementById('accNameInput').value = acc.namaAkun;
   document.getElementById('accTypeSelect').value = acc.tipe;
   document.getElementById('accBalanceInput').value = acc.saldoAwal || 0;
-  document.getElementById('accColorInput').value = acc.warnaIkon || '#0D9488';
+  document.getElementById('accColorInput').value = acc.warnaIkon || '#10B981';
 
   const m = document.getElementById('modalAccount');
   if (m) m.classList.remove('hidden');
@@ -1321,7 +1397,7 @@ function switchTab(tabName) {
   const activeContent = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
   if (activeContent) activeContent.classList.remove('hidden');
 
-  const navItems = document.querySelectorAll('.saldoin-nav-item');
+  const navItems = document.querySelectorAll('.nav-item');
   navItems.forEach(n => n.classList.remove('active'));
 
   const activeNav = document.getElementById(`nav${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
@@ -1343,6 +1419,7 @@ function formatRupiah(number) {
   }).format(number || 0);
 }
 
+// API Cloud Sync Helper
 async function syncDataWithApi() {
   if (!state.apiUrl) return;
 
@@ -1358,6 +1435,9 @@ async function syncDataWithApi() {
       if (json.goals && json.goals.length > 0) state.goals = json.goals;
       if (json.rules && json.rules.length > 0) state.rules = json.rules;
       if (json.data) state.data = json.data;
+      
+      const statusText = document.getElementById('syncStatusText');
+      if (statusText) statusText.innerText = 'Tersinkron';
     }
   } catch (err) {
     console.error('API Sync Error:', err);
@@ -1408,10 +1488,10 @@ function renderSettingsCategories() {
   const cats = state.categories.pengeluaran || [];
   cats.forEach(c => {
     const div = document.createElement('div');
-    div.className = 'flex items-center justify-between text-xs py-1.5 border-b border-slate-100 last:border-none';
+    div.className = 'flex items-center justify-between text-xs py-1.5 border-b border-slate-800/60 last:border-none';
     div.innerHTML = `
-      <span class="text-slate-700 font-semibold">${c}</span>
-      <button onclick="deleteCategoryItem('${c}')" class="text-slate-400 hover:text-rose-500 font-bold transition"><i class="fa-solid fa-trash"></i></button>
+      <span class="text-slate-300 font-semibold">${c}</span>
+      <button onclick="deleteCategoryItem('${c}')" class="text-slate-600 hover:text-rose-400 font-bold transition"><i class="fa-solid fa-trash"></i></button>
     `;
     container.appendChild(div);
   });
